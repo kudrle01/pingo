@@ -1,0 +1,29 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="512" height="512" rx="112" fill="#111827"/>
+  <rect width="512" height="512" rx="112" fill="url(#background)"/>
+  <circle cx="386" cy="120" r="70" fill="#F472B6" fill-opacity="0.28"/>
+  <circle cx="126" cy="394" r="92" fill="#22D3EE" fill-opacity="0.18"/>
+  <path
+    d="M240 66L112 274H220L188 446L400 202H276L322 66H240Z"
+    fill="#FDE68A"
+    stroke="#FFFFFF"
+    stroke-width="22"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M240 66L112 274H220L188 446L400 202H276L322 66H240Z"
+    fill="url(#bolt)"
+  />
+  <defs>
+    <linearGradient id="background" x1="64" y1="48" x2="448" y2="464" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#7C3AED"/>
+      <stop offset="0.5" stop-color="#EC4899"/>
+      <stop offset="1" stop-color="#0891B2"/>
+    </linearGradient>
+    <linearGradient id="bolt" x1="192" y1="86" x2="328" y2="420" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFF7ED"/>
+      <stop offset="0.48" stop-color="#FACC15"/>
+      <stop offset="1" stop-color="#F97316"/>
+    </linearGradient>
+  </defs>
+</svg>
