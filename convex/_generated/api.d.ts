@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as cleanup from "../cleanup.js";
 import type * as games from "../games.js";
 import type * as http from "../http.js";
 import type * as players from "../players.js";
@@ -23,6 +24,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  cleanup: typeof cleanup;
   games: typeof games;
   http: typeof http;
   players: typeof players;

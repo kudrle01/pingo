@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
+import { closeActiveGamesForUser } from "./cleanup";
 
 export const getByPin = query({
   args: { pin: v.string() },
@@ -25,6 +27,9 @@ export const create = mutation({
     pin: v.string(),
   },
   handler: async (ctx, args) => {
+    const userId = await getAuthUserId(ctx);
+    await closeActiveGamesForUser(ctx, args.hostId, userId);
+
     return await ctx.db.insert("games", {
       ...args,
       status: "lobby",
@@ -49,7 +54,23 @@ export const updateStatus = mutation({
     const patch: Record<string, unknown> = { status };
     if (currentQuestion !== undefined) patch.currentQuestion = currentQuestion;
     if (questionStartedAt !== undefined) patch.questionStartedAt = questionStartedAt;
+    if (status === "finished") {
+      const game = await ctx.db.get(id);
+      if (game && game.finishedAt === undefined) patch.finishedAt = Date.now();
+    }
     await ctx.db.patch(id, patch);
+  },
+});
+
+export const cancel = mutation({
+  args: { id: v.id("games") },
+  handler: async (ctx, { id }) => {
+    const players = await ctx.db
+      .query("players")
+      .withIndex("by_game", (q) => q.eq("gameId", id))
+      .collect();
+    for (const player of players) await ctx.db.delete(player._id);
+    await ctx.db.delete(id);
   },
 });
 
@@ -141,5 +162,123 @@ export const getAnswers = query({
         q.eq("gameId", gameId).eq("questionIndex", questionIndex)
       )
       .collect();
+  },
+});
+
+export const history = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return [];
+
+    const hostedGames = await ctx.db
+      .query("games")
+      .withIndex("by_host", (q) => q.eq("hostId", userId))
+      .collect();
+
+    const myPlayerRecords = await ctx.db
+      .query("players")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    const gameMap = new Map<string, (typeof hostedGames)[number]>();
+    for (const game of hostedGames) gameMap.set(game._id, game);
+    const myPlayerByGame = new Map<string, (typeof myPlayerRecords)[number]>();
+    for (const player of myPlayerRecords) {
+      myPlayerByGame.set(player.gameId, player);
+      if (!gameMap.has(player.gameId)) {
+        const game = await ctx.db.get(player.gameId);
+        if (game) gameMap.set(game._id, game);
+      }
+    }
+
+    const results = await Promise.all(
+      [...gameMap.values()]
+        .filter((game) => game.status === "finished")
+        .map(async (game) => {
+        const quiz = await ctx.db.get(game.quizId);
+        const players = await ctx.db
+          .query("players")
+          .withIndex("by_game", (q) => q.eq("gameId", game._id))
+          .collect();
+        const ranked = [...players].sort((a, b) => b.score - a.score);
+
+        const myPlayer = myPlayerByGame.get(game._id);
+        const myRank = myPlayer
+          ? ranked.findIndex((p) => p._id === myPlayer._id) + 1
+          : null;
+
+        const winner = ranked[0];
+
+        return {
+          _id: game._id,
+          pin: game.pin,
+          status: game.status,
+          finishedAt: game.finishedAt,
+          playedAt: game.finishedAt ?? game._creationTime,
+          quizTitle: quiz?.title ?? "Smazaný kvíz",
+          questionCount: quiz?.questions.length ?? 0,
+          playerCount: players.length,
+          hosted: game.hostId === userId,
+          played: myPlayer !== undefined,
+          myPlayerId: myPlayer?._id ?? null,
+          myRank: myRank && myRank > 0 ? myRank : null,
+          myScore: myPlayer?.score ?? null,
+          winnerNickname: winner?.nickname ?? null,
+          winnerScore: winner?.score ?? null,
+        };
+      })
+    );
+
+    return results.sort((a, b) => b.playedAt - a.playedAt);
+  },
+});
+
+export const active = query({
+  args: {},
+  handler: async (ctx) => {
+    const userId = await getAuthUserId(ctx);
+    if (!userId) return null;
+
+    const hostedGames = await ctx.db
+      .query("games")
+      .withIndex("by_host", (q) => q.eq("hostId", userId))
+      .collect();
+
+    const candidates = new Map<string, (typeof hostedGames)[number]>();
+    const playerByGame = new Map<string, string>();
+
+    for (const game of hostedGames) {
+      if (game.status !== "finished") candidates.set(game._id, game);
+    }
+
+    const myPlayerRecords = await ctx.db
+      .query("players")
+      .withIndex("by_user", (q) => q.eq("userId", userId))
+      .collect();
+
+    for (const player of myPlayerRecords) {
+      const game = await ctx.db.get(player.gameId);
+      if (game && game.status !== "finished") {
+        candidates.set(game._id, game);
+        playerByGame.set(game._id, player._id);
+      }
+    }
+
+    if (candidates.size === 0) return null;
+
+    const game = [...candidates.values()].sort(
+      (a, b) => b._creationTime - a._creationTime
+    )[0];
+    const quiz = await ctx.db.get(game.quizId);
+
+    return {
+      _id: game._id,
+      status: game.status,
+      pin: game.pin,
+      quizTitle: quiz?.title ?? "",
+      hosted: game.hostId === userId,
+      myPlayerId: playerByGame.get(game._id) ?? null,
+    };
   },
 });

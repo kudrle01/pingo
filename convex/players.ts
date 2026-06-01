@@ -1,5 +1,7 @@
 import { v } from "convex/values";
 import { query, mutation } from "./_generated/server";
+import { getAuthUserId } from "@convex-dev/auth/server";
+import { closeActiveGamesForUser } from "./cleanup";
 
 export const listByGame = query({
   args: { gameId: v.id("games") },
@@ -42,9 +44,16 @@ export const join = mutation({
     );
     if (isTaken) throw new Error("Tahle přezdívka už je ve hře obsazená");
 
+    const userId = await getAuthUserId(ctx);
+
+    if (userId) {
+      await closeActiveGamesForUser(ctx, userId, userId, args.gameId);
+    }
+
     return await ctx.db.insert("players", {
       ...args,
       nickname,
+      userId: userId ?? undefined,
       score: 0,
       streak: 0,
     });

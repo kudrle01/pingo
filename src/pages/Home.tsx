@@ -6,6 +6,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useConvexAuth } from "convex/react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 type AuthMode = "join" | "login" | "register";
 
@@ -13,6 +14,7 @@ export default function Home() {
   const navigate = useNavigate();
   const { signIn } = useAuthActions();
   const { isAuthenticated } = useConvexAuth();
+  const { t } = useTranslation();
 
   const [pin, setPin] = useState("");
   const [mode, setMode] = useState<AuthMode>("join");
@@ -50,11 +52,7 @@ export default function Home() {
         navigate("/dashboard", { replace: true });
       }
     } catch {
-      setError(
-        mode === "login"
-          ? "Špatný e-mail nebo heslo."
-          : "Registrace se nepodařila. Zkus jiný e-mail."
-      );
+      setError(mode === "login" ? t("home.err.login") : t("home.err.register"));
     } finally {
       setLoading(false);
     }
@@ -66,34 +64,34 @@ export default function Home() {
     try {
       await signIn("google", { redirectTo: "/dashboard" });
     } catch {
-      setError("Přihlášení přes Google se nepodařilo.");
+      setError(t("home.err.google"));
     } finally {
       setGoogleLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6 bg-animated overflow-hidden relative">
-      <div className="relative z-10 w-full max-w-sm flex flex-col items-center gap-6">
+    <div className="min-h-screen-dvh flex flex-col items-center p-4 sm:p-6 bg-animated overflow-y-auto relative safe-x safe-t-min safe-b">
+      <div className="relative z-10 w-full max-w-none sm:max-w-sm my-auto flex flex-col items-center gap-4 sm:gap-6 py-4">
         <motion.div
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", bounce: 0.4 }}
           className="text-center"
         >
-          <div className="flex items-center justify-center gap-2 mb-3">
+          <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
             <motion.div
               animate={{ rotate: [0, -15, 15, -10, 10, 0] }}
               transition={{ repeat: Infinity, repeatDelay: 3, duration: 0.6 }}
             >
-              <Zap size={36} className="text-violet-400 fill-violet-400" />
+              <Zap className="h-8 w-8 sm:h-9 sm:w-9 text-violet-400 fill-violet-400" />
             </motion.div>
           </div>
-          <h1 className="text-7xl font-black tracking-tighter">
+          <h1 className="text-6xl sm:text-7xl font-black tracking-tighter">
             <span className="text-gradient">Pingo</span>
           </h1>
-          <p className="text-gray-400 mt-2 text-base sm:text-lg font-medium">
-            Živé kvízy pro všechny
+          <p className="text-gray-400 mt-1.5 sm:mt-2 text-base sm:text-lg font-medium">
+            {t("home.tagline")}
           </p>
         </motion.div>
 
@@ -101,7 +99,7 @@ export default function Home() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, type: "spring", bounce: 0.35 }}
-          className="w-full card p-6 flex flex-col gap-4"
+          className="w-full card p-0 sm:p-6 flex flex-col gap-4"
         >
           <div className="flex gap-1 p-1 bg-surface-900 rounded-xl">
             {(["join", "login", "register"] as AuthMode[]).map((m) => (
@@ -115,7 +113,7 @@ export default function Home() {
                     : "text-gray-500 hover:text-gray-300",
                 ].join(" ")}
               >
-                  {m === "join" ? "Hrát" : m === "login" ? "Přihlásit" : "Registrace"}
+                  {m === "join" ? t("home.tab.join") : m === "login" ? t("home.tab.login") : t("home.tab.register")}
               </button>
             ))}
           </div>
@@ -131,8 +129,8 @@ export default function Home() {
                 className="flex flex-col gap-3"
               >
                 <div>
-                  <p className="text-white font-black text-lg mb-0.5">Připoj se ke hře</p>
-                  <p className="text-gray-500 text-sm">Zadej herní PIN</p>
+                  <p className="text-white font-black text-lg mb-0.5">{t("home.join.title")}</p>
+                  <p className="text-gray-500 text-sm">{t("home.join.subtitle")}</p>
                 </div>
                 <Input
                   placeholder="123456"
@@ -144,7 +142,7 @@ export default function Home() {
                   className="text-center text-2xl font-black tracking-[0.3em]"
                 />
                 <Button type="submit" size="lg" disabled={pin.length !== 6} className="w-full">
-                  Vstoupit <ArrowRight size={18} />
+                  {t("home.join.cta")} <ArrowRight size={18} />
                 </Button>
               </motion.form>
             )}
@@ -159,8 +157,8 @@ export default function Home() {
                 className="flex flex-col gap-3"
               >
                 <div>
-                  <p className="text-white font-black text-lg mb-0.5">Vítej zpět</p>
-                  <p className="text-gray-500 text-sm">Přihlas se ke svému účtu</p>
+                  <p className="text-white font-black text-lg mb-0.5">{t("home.login.title")}</p>
+                  <p className="text-gray-500 text-sm">{t("home.login.subtitle")}</p>
                 </div>
                 <div className="relative">
                   <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
@@ -177,7 +175,7 @@ export default function Home() {
                   <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Heslo"
+                    placeholder={t("home.password")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-9 pr-10"
@@ -197,7 +195,7 @@ export default function Home() {
                   </p>
                 )}
                 <Button type="submit" size="lg" isLoading={loading} disabled={googleLoading || !email || !password} className="w-full">
-                  <LogIn size={18} /> Přihlásit se
+                  <LogIn size={18} /> {t("home.login.cta")}
                 </Button>
               </motion.form>
             )}
@@ -212,14 +210,14 @@ export default function Home() {
                 className="flex flex-col gap-3"
               >
                 <div>
-                  <p className="text-white font-black text-lg mb-0.5">Vytvoř účet</p>
-                  <p className="text-gray-500 text-sm">Zdarma, bez kreditní karty</p>
+                  <p className="text-white font-black text-lg mb-0.5">{t("home.register.title")}</p>
+                  <p className="text-gray-500 text-sm">{t("home.register.subtitle")}</p>
                 </div>
                 <div className="relative">
                   <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                   <Input
                     type="text"
-                    placeholder="Jméno"
+                    placeholder={t("home.name")}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="pl-9"
@@ -241,7 +239,7 @@ export default function Home() {
                   <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none" />
                   <Input
                     type={showPassword ? "text" : "password"}
-                    placeholder="Heslo (min. 8 znaků)"
+                    placeholder={t("home.register.passwordPlaceholder")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     className="pl-9 pr-10"
@@ -261,7 +259,7 @@ export default function Home() {
                   </p>
                 )}
                 <Button type="submit" size="lg" isLoading={loading} disabled={googleLoading || !email || !password || password.length < 8} className="w-full">
-                  <UserPlus size={18} /> Vytvořit účet
+                  <UserPlus size={18} /> {t("home.register.cta")}
                 </Button>
               </motion.form>
             )}
@@ -277,13 +275,13 @@ export default function Home() {
                 disabled={loading}
                 className="w-full"
               >
-                <Globe size={16} /> Pokračovat přes Google
+                <Globe size={16} /> {t("home.google")}
               </Button>
               <p className="text-center text-xs text-gray-600 uppercase tracking-wider font-semibold">
-                Nebo hraj bez účtu
+                {t("home.orGuest")}
               </p>
               <Button variant="secondary" onClick={() => setMode("join")} className="w-full">
-                <LayoutDashboard size={16} /> Připojit se ke hře
+                <LayoutDashboard size={16} /> {t("home.joinGame")}
               </Button>
             </div>
           )}

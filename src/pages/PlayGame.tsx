@@ -12,6 +12,7 @@ import { formatScore } from "@/lib/formatters";
 import { isTextAnswerCorrect } from "@/lib/questionTemplates";
 import { getAvatar } from "@/lib/avatars";
 import { useCountdown } from "@/hooks/useCountdown";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 const ANSWER_COLORS = [
   { bg: "bg-[#e74c3c]", selected: "ring-4 ring-white shadow-xl" },
@@ -78,6 +79,7 @@ export default function PlayGame() {
   const { gameId } = useParams<{ gameId: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const playerId = searchParams.get("playerId") as Id<"players"> | null;
 
@@ -108,13 +110,13 @@ export default function PlayGame() {
 
   if (!game || !quiz || !player) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen-dvh safe-x flex items-center justify-center">
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="text-gray-400"
         >
-          Čekám na hru...
+          {t("play.waitingGame")}
         </motion.p>
       </div>
     );
@@ -124,7 +126,7 @@ export default function PlayGame() {
 
   if (game.status === "lobby") {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-6">
+      <div className="min-h-screen-dvh safe-x flex flex-col items-center justify-center gap-6 p-6">
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
@@ -139,7 +141,7 @@ export default function PlayGame() {
           className="text-center"
         >
           <p className="text-2xl font-black text-white">{player.nickname}</p>
-          <p className="text-gray-400 mt-1">Čekám na spuštění hry...</p>
+          <p className="text-gray-400 mt-1">{t("play.waitingStart")}</p>
         </motion.div>
         <motion.div
           animate={{ opacity: [0.4, 1, 0.4] }}
@@ -147,7 +149,7 @@ export default function PlayGame() {
           className="flex items-center gap-2 text-gray-500 text-sm"
         >
           <Clock size={14} />
-          Hostitel brzy začne
+          {t("play.hostSoon")}
         </motion.div>
       </div>
     );
@@ -161,7 +163,7 @@ export default function PlayGame() {
     const didAnswer = selectedAnswer !== null;
 
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-5 p-6">
+      <div className="min-h-screen-dvh safe-x flex flex-col items-center justify-center gap-5 p-6">
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -182,7 +184,7 @@ export default function PlayGame() {
             !didAnswer ? "text-gray-500" : isCorrect ? "text-green-400" : "text-red-400"
           }`}
         >
-          {!didAnswer ? "Čas vypršel!" : isCorrect ? "Správně!" : "Špatně!"}
+          {!didAnswer ? t("play.timeUp") : isCorrect ? t("play.correct") : t("play.wrong")}
         </motion.h2>
 
         {currentQ && (
@@ -190,10 +192,10 @@ export default function PlayGame() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="card px-5 py-3 text-center"
+            className="card px-5 py-3 text-center max-w-[85vw]"
           >
-            <p className="text-xs text-gray-500 mb-1">Správná odpověď</p>
-            <p className="text-white font-bold">{currentQ.options[currentQ.correctIndex]}</p>
+            <p className="text-xs text-gray-500 mb-1">{t("play.correctAnswer")}</p>
+            <p className="text-white font-bold break-words">{currentQ.options[currentQ.correctIndex]}</p>
           </motion.div>
         )}
 
@@ -204,7 +206,7 @@ export default function PlayGame() {
             transition={{ delay: 0.4, type: "spring", bounce: 0.6 }}
             className="bg-violet-600/20 border border-violet-500/40 rounded-2xl px-8 py-4 text-center"
           >
-            <p className="text-gray-400 text-sm">Body za toto kolo</p>
+            <p className="text-gray-400 text-sm">{t("play.roundPoints")}</p>
             <p className="text-4xl font-black text-violet-300">+{formatScore(lastPoints)}</p>
           </motion.div>
         )}
@@ -215,7 +217,7 @@ export default function PlayGame() {
           transition={{ delay: 0.6 }}
           className="text-center"
         >
-          <p className="text-gray-500 text-sm">Celkové skóre</p>
+          <p className="text-gray-500 text-sm">{t("play.totalScore")}</p>
           <p className="text-2xl font-bold text-white">{formatScore(player.score)}</p>
         </motion.div>
 
@@ -225,7 +227,7 @@ export default function PlayGame() {
           transition={{ delay: 0.8 }}
           className="text-gray-600 text-sm"
         >
-          Čekám na další otázku...
+          {t("play.waitNext")}
         </motion.p>
       </div>
     );
@@ -262,7 +264,7 @@ export default function PlayGame() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col p-4 gap-3 relative">
+    <div className="min-h-screen-dvh safe-x safe-t-min safe-b-min flex flex-col p-4 gap-3 relative">
       {showPopup && lastPoints !== null && <ScorePopup points={lastPoints} />}
 
       <div className="flex items-center justify-between gap-3">
@@ -299,7 +301,7 @@ export default function PlayGame() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 24 }}
           transition={{ type: "spring", bounce: 0.3 }}
-          className="card p-4 sm:p-6 flex items-center justify-center min-h-[120px]"
+          className="card px-0 py-4 sm:p-6 flex items-center justify-center min-h-[120px]"
         >
           <p className="text-lg sm:text-xl font-bold text-white text-center break-words">{currentQ.text}</p>
         </motion.div>
@@ -320,8 +322,8 @@ export default function PlayGame() {
             >
               <LoaderCircle size={28} className="animate-spin" />
             </motion.div>
-            <p className="text-white font-bold text-sm">Odpověď odeslána.</p>
-            <p className="text-gray-500 text-xs">Čekám na výsledky od hostitele...</p>
+            <p className="text-white font-bold text-sm">{t("play.answerSent")}</p>
+            <p className="text-gray-500 text-xs">{t("play.waitHost")}</p>
           </motion.div>
         )}
       </AnimatePresence>
@@ -348,7 +350,7 @@ export default function PlayGame() {
                 onClick={() => commitAnswer(idx, idx === currentQ.correctIndex)}
                 disabled={answered}
                 className={[
-                  "rounded-2xl p-4 text-white font-bold text-left flex items-center gap-3 shadow-lg transition-all duration-200",
+                  "rounded-2xl p-4 min-h-[72px] sm:min-h-[88px] text-white font-bold text-left flex items-center gap-3 shadow-lg transition-all duration-200 active:scale-[0.97]",
                   col.bg,
                   isSelected ? col.selected : "",
                   answered && !isSelected ? "opacity-40 scale-95" : "",
@@ -382,15 +384,15 @@ export default function PlayGame() {
                 onClick={() => commitAnswer(idx, idx === currentQ.correctIndex)}
                 disabled={answered}
                 className={[
-                  "rounded-2xl p-6 text-white font-bold text-xl flex flex-col items-center justify-center gap-2 transition-all duration-200",
+                  "rounded-2xl p-6 text-white font-bold text-xl flex flex-col items-center justify-center gap-2 text-center break-words transition-all duration-200",
                   idx === 0 ? "bg-[#2ecc71]" : "bg-[#e74c3c]",
                   isSelected ? "ring-4 ring-white shadow-xl" : "",
                   answered && !isSelected ? "opacity-40 scale-95" : "",
                   "disabled:cursor-not-allowed",
                 ].join(" ")}
               >
-                {idx === 0 ? <Check size={32} /> : <X size={32} />}
-                {option}
+                {idx === 0 ? <Check size={32} className="shrink-0" /> : <X size={32} className="shrink-0" />}
+                <span className="min-w-0 break-words">{option}</span>
               </motion.button>
             );
           })}
@@ -410,14 +412,14 @@ export default function PlayGame() {
           className="flex flex-col gap-3"
         >
           <Input
-            placeholder="Napište odpověď..."
+            placeholder={t("play.typePlaceholder")}
             value={textAnswer}
             onChange={(e) => setTextAnswer(e.target.value)}
             disabled={answered}
             autoFocus
           />
           <Button type="submit" size="lg" disabled={answered || textAnswer.trim().length === 0}>
-            <SendHorizontal size={18} /> Odeslat odpověď
+            <SendHorizontal size={18} /> {t("play.submit")}
           </Button>
         </motion.form>
       )}

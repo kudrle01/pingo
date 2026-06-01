@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -19,11 +20,13 @@ export function ConfirmDialog({
   title,
   description,
   confirmLabel,
-  cancelLabel = "Zrušit",
+  cancelLabel,
   isLoading = false,
   onConfirm,
   onClose,
 }: ConfirmDialogProps) {
+  const { t } = useTranslation();
+  const cancel = cancelLabel ?? t("common.cancel");
   return (
     <Modal isOpen={isOpen} onClose={isLoading ? () => undefined : onClose} title={title}>
       <div className="flex flex-col gap-5">
@@ -36,7 +39,7 @@ export function ConfirmDialog({
 
         <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button type="button" variant="secondary" onClick={onClose} disabled={isLoading}>
-            {cancelLabel}
+            {cancel}
           </Button>
           <Button type="button" variant="danger" onClick={onConfirm} isLoading={isLoading}>
             {confirmLabel}

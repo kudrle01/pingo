@@ -1,6 +1,7 @@
 import { Medal, Flame } from "lucide-react";
 import { formatScore, formatRank } from "@/lib/formatters";
 import { getAvatar } from "@/lib/avatars";
+import { useTranslation } from "@/i18n/LanguageProvider";
 import type { Player } from "@/types";
 
 interface LeaderboardProps {
@@ -12,11 +13,12 @@ const MEDAL_COLORS = ["text-yellow-400", "text-gray-300", "text-amber-500"];
 const MEDAL_BG = ["bg-yellow-500/10", "bg-gray-400/10", "bg-amber-600/10"];
 
 export function Leaderboard({ players, highlightId }: LeaderboardProps) {
+  const { t } = useTranslation();
   const sorted = [...players].sort((a, b) => b.score - a.score);
 
   if (sorted.length === 0) {
     return (
-      <div className="text-center text-gray-600 py-8 text-sm">Zatím žádní hráči.</div>
+      <div className="text-center text-gray-600 py-8 text-sm">{t("lb.empty")}</div>
     );
   }
 
@@ -51,7 +53,7 @@ export function Leaderboard({ players, highlightId }: LeaderboardProps) {
             <span className="flex-1 min-w-0 font-semibold text-white truncate text-sm">
               {player.nickname}
               {isHighlighted && (
-                <span className="ml-1.5 text-xs text-violet-400 font-normal">(ty)</span>
+                <span className="ml-1.5 text-xs text-violet-400 font-normal">{t("lb.you")}</span>
               )}
             </span>
             {player.streak >= 2 && (

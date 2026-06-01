@@ -3,13 +3,69 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    height: 100%;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
   body {
-    @apply bg-surface-950 text-white min-h-screen;
+    @apply bg-surface-950 text-white;
+    min-height: 100vh;
+    min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    overscroll-behavior-y: none;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-overflow-scrolling: touch;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button,
+  a,
+  [role="button"] {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    touch-action: manipulation;
+  }
+
+  input,
+  textarea,
+  select {
+    font-size: 16px;
   }
 }
 
 @layer utilities {
+  .min-h-screen-dvh {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+  .h-screen-dvh {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .safe-t {
+    padding-top: env(safe-area-inset-top);
+  }
+  .safe-t-min {
+    padding-top: max(env(safe-area-inset-top), 1rem);
+  }
+  .safe-b {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .safe-b-min {
+    padding-bottom: max(env(safe-area-inset-bottom), 1rem);
+  }
+  .safe-x {
+    padding-left: max(env(safe-area-inset-left), 1rem);
+    padding-right: max(env(safe-area-inset-right), 1rem);
+  }
+  .pb-nav {
+    padding-bottom: calc(5rem + env(safe-area-inset-bottom));
+  }
+
   .text-gradient {
     background: linear-gradient(135deg, #a78bfa 0%, #f472b6 100%);
     -webkit-background-clip: text;
@@ -31,11 +87,18 @@
   }
 
   .card {
-    @apply bg-surface-800 border border-white/[0.06] rounded-2xl shadow-card;
+    @apply bg-transparent border-0 rounded-none shadow-none;
+    @apply sm:bg-surface-800 sm:border sm:border-white/[0.06] sm:rounded-2xl sm:shadow-card;
   }
 
   .card-hover {
-    @apply hover:bg-surface-700 hover:border-white/[0.10] hover:shadow-card-hover transition-all duration-200;
+    @apply transition-all duration-200;
+    @apply sm:hover:bg-surface-700 sm:hover:border-white/[0.10] sm:hover:shadow-card-hover;
+  }
+
+  .tile {
+    @apply bg-surface-800 rounded-2xl transition-all duration-200 active:bg-surface-700;
+    @apply sm:border sm:border-white/[0.06] sm:shadow-card sm:hover:bg-surface-700 sm:hover:border-white/[0.10];
   }
 
   .glow-brand {

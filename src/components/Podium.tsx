@@ -9,6 +9,7 @@ import type { Player } from "@/types";
 interface PodiumProps {
   players: Player[];
   highlightId?: string;
+  celebrate?: boolean;
 }
 
 const SLOTS = [
@@ -23,8 +24,9 @@ const RANK_ICONS = {
   3: <Medal className="h-4 w-4" strokeWidth={2.5} />,
 } as const;
 
-export function Podium({ players, highlightId }: PodiumProps) {
+export function Podium({ players, highlightId, celebrate = true }: PodiumProps) {
   useEffect(() => {
+    if (!celebrate) return;
     const t = setTimeout(() => {
       confetti({
         particleCount: 200,
@@ -34,7 +36,7 @@ export function Podium({ players, highlightId }: PodiumProps) {
       });
     }, 2000);
     return () => clearTimeout(t);
-  }, []);
+  }, [celebrate]);
 
   return (
     <div className="flex items-end justify-center gap-2 sm:gap-3 pt-6 pb-2 overflow-x-auto">

@@ -1,17 +1,22 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowLeft, Plus, Save } from "lucide-react";
+import { Plus, Save } from "lucide-react";
 import { api } from "@convex/_generated/api";
+import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { QuestionEditor } from "@/components/QuestionEditor";
 import { QuestionImportButton } from "@/components/QuestionImportButton";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { useToast } from "@/components/ToastProvider";
 import { emptyQuestionForType } from "@/lib/questionTemplates";
 import type { Question } from "@/types";
 
 export default function CreateQuiz() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const toast = useToast();
   const createQuiz = useMutation(api.quizzes.create);
   const me = useQuery(api.users.me);
 
@@ -53,6 +58,7 @@ export default function CreateQuiz() {
         isPublic,
         questions,
       });
+      toast.success(t("toast.quizCreated"));
       navigate("/dashboard", { replace: true });
     } finally {
       setSaving(false);
@@ -60,23 +66,16 @@ export default function CreateQuiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4 mb-8">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={17} /> Zpět
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">Nový kvíz</h1>
-        </div>
+    <div className="min-h-screen-dvh bg-gray-950">
+      <AppHeader title={t("quizForm.createTitle")} back="/dashboard" />
+      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x safe-b-min">
+        <h1 className="hidden sm:block text-2xl sm:text-3xl font-black text-white mb-8">{t("quizForm.createTitle")}</h1>
 
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5 flex flex-col gap-4">
             <Input
-              label="Název kvízu"
-              placeholder="Např. Geografie Evropy"
+              label={t("quizForm.name")}
+              placeholder={t("quizForm.namePlaceholder")}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -88,7 +87,7 @@ export default function CreateQuiz() {
                 onChange={(e) => setIsPublic(e.target.checked)}
                 className="w-4 h-4 accent-violet-500"
               />
-              <span className="text-gray-300 text-sm">Veřejný kvíz</span>
+              <span className="text-gray-300 text-sm">{t("quizForm.public")}</span>
             </label>
             <QuestionImportButton onImport={handleImport} />
           </div>
@@ -105,11 +104,11 @@ export default function CreateQuiz() {
           ))}
 
           <Button type="button" variant="secondary" onClick={addQuestion}>
-            <Plus size={18} /> Přidat otázku
+            <Plus size={18} /> {t("quizForm.addQuestion")}
           </Button>
 
           <Button type="submit" size="lg" isLoading={saving} disabled={!me}>
-            <Save size={18} /> Uložit kvíz
+            <Save size={18} /> {t("quizForm.saveCreate")}
           </Button>
         </form>
       </div>

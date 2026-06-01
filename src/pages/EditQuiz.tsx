@@ -1,19 +1,24 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery } from "convex/react";
-import { ArrowLeft, Plus, Save } from "lucide-react";
+import { Plus, Save } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
+import { AppHeader } from "@/components/AppHeader";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { QuestionEditor } from "@/components/QuestionEditor";
 import { QuestionImportButton } from "@/components/QuestionImportButton";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { useToast } from "@/components/ToastProvider";
 import { emptyQuestionForType } from "@/lib/questionTemplates";
 import type { Question } from "@/types";
 
 export default function EditQuiz() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const toast = useToast();
 
   const quiz = useQuery(api.quizzes.get, id ? { id: id as Id<"quizzes"> } : "skip");
   const updateQuiz = useMutation(api.quizzes.update);
@@ -35,17 +40,17 @@ export default function EditQuiz() {
 
   if (quiz === undefined) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-400 animate-pulse">Načítám kvíz…</p>
+      <div className="min-h-screen-dvh flex items-center justify-center">
+        <p className="text-gray-400 animate-pulse">{t("quizForm.loading")}</p>
       </div>
     );
   }
 
   if (quiz === null) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4 p-4 sm:p-6">
-        <p className="text-xl text-white">Kvíz nenalezen.</p>
-        <Button onClick={() => navigate("/dashboard")}>Zpět na Dashboard</Button>
+      <div className="min-h-screen-dvh flex flex-col items-center justify-center gap-4 p-4 sm:p-6">
+        <p className="text-xl text-white">{t("quizForm.notFound")}</p>
+        <Button onClick={() => navigate("/dashboard")}>{t("quizForm.backDashboard")}</Button>
       </div>
     );
   }
@@ -77,6 +82,7 @@ export default function EditQuiz() {
         isPublic,
         questions,
       });
+      toast.success(t("toast.quizUpdated"));
       navigate("/dashboard", { replace: true });
     } finally {
       setSaving(false);
@@ -84,22 +90,15 @@ export default function EditQuiz() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-950 p-4 sm:p-6">
-      <div className="max-w-2xl mx-auto">
-        <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-4 mb-8">
-          <button
-            onClick={() => navigate("/dashboard")}
-            className="inline-flex items-center gap-2 text-gray-400 hover:text-white transition-colors"
-          >
-            <ArrowLeft size={17} /> Zpět
-          </button>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">Upravit kvíz</h1>
-        </div>
+    <div className="min-h-screen-dvh bg-gray-950">
+      <AppHeader title={t("quizForm.editTitle")} back="/dashboard" />
+      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x safe-b-min">
+        <h1 className="hidden sm:block text-2xl sm:text-3xl font-black text-white mb-8">{t("quizForm.editTitle")}</h1>
 
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5 flex flex-col gap-4">
             <Input
-              label="Název kvízu"
+              label={t("quizForm.name")}
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -111,7 +110,7 @@ export default function EditQuiz() {
                 onChange={(e) => setIsPublic(e.target.checked)}
                 className="w-4 h-4 accent-violet-500"
               />
-              <span className="text-gray-300 text-sm">Veřejný kvíz</span>
+              <span className="text-gray-300 text-sm">{t("quizForm.public")}</span>
             </label>
             <QuestionImportButton onImport={handleImport} />
           </div>
@@ -128,11 +127,11 @@ export default function EditQuiz() {
           ))}
 
           <Button type="button" variant="secondary" onClick={addQuestion}>
-            <Plus size={18} /> Přidat otázku
+            <Plus size={18} /> {t("quizForm.addQuestion")}
           </Button>
 
           <Button type="submit" size="lg" isLoading={saving}>
-            <Save size={18} /> Uložit změny
+            <Save size={18} /> {t("quizForm.saveEdit")}
           </Button>
         </form>
       </div>

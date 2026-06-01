@@ -38,15 +38,21 @@ export default defineSchema({
     ),
     currentQuestion: v.number(),
     questionStartedAt: v.optional(v.number()),
-  }).index("by_pin", ["pin"]),
+    finishedAt: v.optional(v.number()),
+  })
+    .index("by_pin", ["pin"])
+    .index("by_host", ["hostId"]),
 
   players: defineTable({
     gameId: v.id("games"),
+    userId: v.optional(v.id("users")),
     nickname: v.string(),
     avatar: v.optional(v.string()),
     score: v.number(),
     streak: v.number(),
-  }).index("by_game", ["gameId"]),
+  })
+    .index("by_game", ["gameId"])
+    .index("by_user", ["userId"]),
 
   answers: defineTable({
     gameId: v.id("games"),

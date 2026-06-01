@@ -1,19 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation, useQuery, useConvexAuth } from "convex/react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, CheckCircle2, ArrowRight, Dices } from "lucide-react";
+import { CheckCircle2, ArrowRight, Dices } from "lucide-react";
 import { api } from "@convex/_generated/api";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { AppHeader } from "@/components/AppHeader";
+import { BottomNav } from "@/components/BottomNav";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { useToast } from "@/components/ToastProvider";
 import { getAvatar, randomSeed } from "@/lib/avatars";
 
 export default function JoinGame() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useTranslation();
+  const toast = useToast();
+
+  const { isAuthenticated } = useConvexAuth();
+  const me = useQuery(api.users.me);
 
   const [pin, setPin] = useState(searchParams.get("pin") ?? "");
   const [nickname, setNickname] = useState("");
+  const [nicknameTouched, setNicknameTouched] = useState(false);
   const [avatarSeed, setAvatarSeed] = useState(() => randomSeed());
   const [rolling, setRolling] = useState(false);
   const [error, setError] = useState("");
@@ -21,6 +31,12 @@ export default function JoinGame() {
 
   const game = useQuery(api.games.getByPin, pin.length === 6 ? { pin } : "skip");
   const joinGame = useMutation(api.players.join);
+
+  useEffect(() => {
+    if (!nicknameTouched && me?.name) {
+      setNickname(me.name.slice(0, 20));
+    }
+  }, [me?.name, nicknameTouched]);
 
   const avatar = getAvatar(avatarSeed);
 
@@ -37,11 +53,11 @@ export default function JoinGame() {
     setError("");
 
     if (!game) {
-      setError("Hra s tímto PINem neexistuje.");
+      setError(t("join.err.notFound"));
       return;
     }
     if (game.status !== "lobby") {
-      setError("Hra již probíhá nebo skončila.");
+      setError(t("join.err.notLobby"));
       return;
     }
 
@@ -52,13 +68,14 @@ export default function JoinGame() {
         nickname: nickname.trim(),
         avatar: avatarSeed,
       });
+      toast.success(t("toast.joined"));
       navigate(`/play/${game._id}?playerId=${playerId}`, { replace: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : "";
       setError(
         message.includes("přezdívka") || message.includes("Přezdívka")
-          ? "Tahle přezdívka už je ve hře obsazená."
-          : "Nepodařilo se připojit. Zkus to znovu."
+          ? t("join.err.nickname")
+          : t("join.err.generic")
       );
     } finally {
       setJoining(false);
@@ -66,22 +83,17 @@ export default function JoinGame() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-animated relative overflow-hidden">
+    <div className="min-h-screen-dvh flex flex-col bg-animated relative overflow-y-auto">
+      <AppHeader title={t("join.headerTitle")} back={isAuthenticated ? undefined : "/"} />
+      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 safe-x pb-nav">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", bounce: 0.35 }}
-        className="relative z-10 card p-5 sm:p-8 w-full max-w-sm"
+        className="relative z-10 card p-0 sm:p-8 w-full max-w-none sm:max-w-sm my-auto"
       >
-        <button
-          type="button"
-          onClick={() => navigate("/", { replace: true })}
-          className="mb-5 inline-flex items-center gap-2 text-sm font-semibold text-gray-400 transition-colors hover:text-white"
-        >
-          <ArrowLeft size={16} /> Zpět
-        </button>
-        <h1 className="text-3xl font-black text-white mb-1">Připojit se</h1>
-        <p className="text-gray-500 text-sm mb-6">Vygeneruj si avatar a zadej přezdívku</p>
+        <h1 className="text-3xl font-black text-white mb-1">{t("join.title")}</h1>
+        <p className="text-gray-500 text-sm mb-6">{t("join.subtitle")}</p>
 
         <form onSubmit={handleJoin} className="flex flex-col gap-5">
           <div className="flex flex-col items-center gap-3">
@@ -114,20 +126,23 @@ export default function JoinGame() {
               >
                 <Dices size={16} />
               </motion.span>
-              Znovu hodit
+              {t("join.reroll")}
             </Button>
           </div>
 
           <Input
-            label="Přezdívka"
-            placeholder="SuperKvízař99"
+            label={t("join.nickname")}
+            placeholder={t("join.nicknamePlaceholder")}
             value={nickname}
-            onChange={(e) => setNickname(e.target.value.slice(0, 20))}
+            onChange={(e) => {
+              setNicknameTouched(true);
+              setNickname(e.target.value.slice(0, 20));
+            }}
             maxLength={20}
           />
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-semibold text-gray-300 tracking-wide">PIN hry</label>
+            <label className="text-sm font-semibold text-gray-300 tracking-wide">{t("join.pin")}</label>
             <Input
               placeholder="123456"
               value={pin}
@@ -145,7 +160,7 @@ export default function JoinGame() {
               className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-3 py-2"
             >
               <CheckCircle2 size={15} />
-              Hra nalezena!
+              {t("join.found")}
             </motion.div>
           )}
 
@@ -166,10 +181,12 @@ export default function JoinGame() {
             disabled={pin.length !== 6 || nickname.trim().length < 2}
             className="w-full"
           >
-            Vstoupit do hry <ArrowRight size={18} />
+            {t("join.cta")} <ArrowRight size={18} />
           </Button>
         </form>
       </motion.div>
+      </div>
+      <BottomNav />
     </div>
   );
 }

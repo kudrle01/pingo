@@ -1,9 +1,24 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 import { resolve } from "path";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      manifest: false,
+      workbox: {
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff,woff2}"],
+        navigateFallback: "/index.html",
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+      },
+      devOptions: { enabled: false },
+    }),
+  ],
   resolve: {
     alias: {
       "@": resolve(__dirname, "src"),

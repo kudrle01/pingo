@@ -9,10 +9,14 @@ import { Leaderboard } from "@/components/Leaderboard";
 import { AnswerDistribution } from "@/components/AnswerDistribution";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { useToast } from "@/components/ToastProvider";
 
 export default function HostGame() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const toast = useToast();
 
   const game = useQuery(api.games.get, { id: gameId as Id<"games"> });
   const quiz = useQuery(api.quizzes.get, game ? { id: game.quizId } : "skip");
@@ -26,6 +30,7 @@ export default function HostGame() {
 
   const updateStatus = useMutation(api.games.updateStatus);
   const nextQuestion = useMutation(api.games.nextQuestion);
+  const cancelGame = useMutation(api.games.cancel);
   const [isEndDialogOpen, setIsEndDialogOpen] = useState(false);
   const [isEnding, setIsEnding] = useState(false);
   const currentQ = game && quiz ? quiz.questions[game.currentQuestion] : undefined;
@@ -64,8 +69,8 @@ export default function HostGame() {
 
   if (!game || !quiz || !players) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 animate-pulse text-sm">Načítám hru…</p>
+      <div className="min-h-screen-dvh flex items-center justify-center">
+        <p className="text-gray-500 animate-pulse text-sm">{t("host.loading")}</p>
       </div>
     );
   }
@@ -73,7 +78,9 @@ export default function HostGame() {
   const isLastQuestion = game.currentQuestion >= quiz.questions.length - 1;
 
   async function handleStart() {
+    if (!players || players.length === 0) return;
     await updateStatus({ id: game!._id, status: "question", questionStartedAt: Date.now() });
+    toast.success(t("toast.gameStarted"));
   }
 
   async function handleShowResults() {
@@ -91,8 +98,15 @@ export default function HostGame() {
   async function confirmEndGame() {
     setIsEnding(true);
     try {
-      await updateStatus({ id: game!._id, status: "finished" });
-      navigate(`/results/${game!._id}`, { replace: true });
+      if (game!.status === "lobby") {
+        await cancelGame({ id: game!._id });
+        toast.info(t("toast.gameCancelled"));
+        navigate("/dashboard", { replace: true });
+      } else {
+        await updateStatus({ id: game!._id, status: "finished" });
+        toast.success(t("toast.gameEnded"));
+        navigate(`/results/${game!._id}`, { replace: true });
+      }
     } finally {
       setIsEnding(false);
       setIsEndDialogOpen(false);
@@ -107,10 +121,10 @@ export default function HostGame() {
     : [];
 
   return (
-    <div className="min-h-screen p-4 sm:p-6">
+    <div className="min-h-screen-dvh p-4 sm:p-6 safe-x safe-t-min safe-b-min">
       <div className="max-w-3xl mx-auto flex flex-col gap-4">
 
-        <div className="card p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="card px-0 py-4 sm:p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center">
               <Zap size={17} className="text-white fill-white" />
@@ -118,7 +132,7 @@ export default function HostGame() {
             <div>
               <h1 className="text-base font-black text-white leading-tight break-words">{quiz.title}</h1>
               <p className="text-gray-500 text-xs">
-                Otázka{" "}
+                {t("host.question")}{" "}
                 <span className="text-violet-400 font-bold">{game.currentQuestion + 1}</span>
                 {" / "}{quiz.questions.length}
               </p>
@@ -126,7 +140,7 @@ export default function HostGame() {
           </div>
           <div className="flex flex-col items-start gap-3 sm:items-end">
             <div className="text-left sm:text-right">
-              <p className="text-xs text-gray-600 uppercase tracking-wider font-semibold">PIN hry</p>
+              <p className="text-xs text-gray-600 uppercase tracking-wider font-semibold">{t("host.pin")}</p>
               <p className="text-3xl font-black text-gradient tracking-widest">{game.pin}</p>
             </div>
             {game.status !== "finished" && (
@@ -136,7 +150,7 @@ export default function HostGame() {
                 size="sm"
                 onClick={() => setIsEndDialogOpen(true)}
               >
-                <StopCircle size={15} /> Ukončit hru
+                <StopCircle size={15} /> {t("host.end")}
               </Button>
             )}
           </div>
@@ -155,15 +169,18 @@ export default function HostGame() {
                 <Users size={28} className="text-violet-400" />
               </div>
               <div>
-                <p className="text-white font-black text-xl">Čeká se na hráče</p>
+                <p className="text-white font-black text-xl">{t("host.waiting")}</p>
                 <p className="text-gray-500 text-sm mt-1">
-                  Připojeno:{" "}
+                  {t("host.connected")}{" "}
                   <span className="text-violet-400 font-bold">{players.length}</span>
                 </p>
               </div>
-              <Button size="lg" onClick={handleStart}>
-                <Play size={18} /> Spustit hru
+              <Button size="lg" onClick={handleStart} disabled={players.length === 0}>
+                <Play size={18} /> {t("host.start")}
               </Button>
+              {players.length === 0 && (
+                <p className="text-xs text-gray-500">{t("host.needPlayers")}</p>
+              )}
             </motion.div>
           )}
 
@@ -175,13 +192,13 @@ export default function HostGame() {
               exit={{ opacity: 0, scale: 0.97 }}
               className="flex flex-col gap-3"
             >
-              <div className="card p-4 sm:p-6 border-violet-500/20">
+              <div className="card px-0 py-4 sm:p-6 border-violet-500/20">
                 <p className="text-xs text-violet-400 font-bold mb-2 uppercase tracking-wider">
-                  Otázka {game.currentQuestion + 1}
+                  {t("host.questionN", { n: game.currentQuestion + 1 })}
                 </p>
                 <p className="text-xl sm:text-2xl font-black text-white break-words">{currentQ.text}</p>
                 <p className="mt-3 text-sm font-semibold text-gray-500">
-                  Odpovědělo {answeredCount} z {players.length} hráčů
+                  {t("host.answered", { a: answeredCount, b: players.length })}
                 </p>
               </div>
 
@@ -202,7 +219,7 @@ export default function HostGame() {
               </div>
 
               <Button size="lg" onClick={handleShowResults}>
-                <BarChart2 size={18} /> Zobrazit výsledky
+                <BarChart2 size={18} /> {t("host.showResults")}
               </Button>
             </motion.div>
           )}
@@ -215,9 +232,9 @@ export default function HostGame() {
               exit={{ opacity: 0, y: -16 }}
               className="flex flex-col gap-3"
             >
-              <div className="card p-5">
+              <div className="card px-0 py-5 sm:p-5">
                 <p className="text-xs text-violet-400 font-bold mb-1 uppercase tracking-wider">
-                  Výsledky otázky {game.currentQuestion + 1}
+                  {t("host.questionResults", { n: game.currentQuestion + 1 })}
                 </p>
                 <p className="text-lg font-black text-white mb-4 break-words">{currentQ.text}</p>
                 <AnswerDistribution
@@ -229,17 +246,17 @@ export default function HostGame() {
 
               <Button size="lg" onClick={handleNext}>
                 {isLastQuestion
-                  ? <><Flag size={18} /> Ukončit hru</>
-                  : <><ChevronRight size={18} /> Další otázka</>}
+                  ? <><Flag size={18} /> {t("host.end")}</>
+                  : <><ChevronRight size={18} /> {t("host.next")}</>}
               </Button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        <motion.div layout className="card p-5">
+        <motion.div layout className="card px-0 py-5 sm:p-5">
           <h2 className="text-xs font-black text-white mb-3 flex items-center gap-2 uppercase tracking-wider">
             <Users size={15} className="text-violet-400" />
-            Hráči ({players.length})
+            {t("host.players", { n: players.length })}
           </h2>
           <Leaderboard players={players} />
         </motion.div>
@@ -247,9 +264,9 @@ export default function HostGame() {
       </div>
       <ConfirmDialog
         isOpen={isEndDialogOpen}
-        title="Ukončit hru?"
-        description="Hra se okamžitě označí jako dokončená a všichni hráči přejdou na výsledky. Aktuální otázka už nepůjde znovu otevřít."
-        confirmLabel="Ukončit hru"
+        title={t("host.end.title")}
+        description={t("host.end.desc")}
+        confirmLabel={t("host.end.confirm")}
         isLoading={isEnding}
         onConfirm={confirmEndGame}
         onClose={() => setIsEndDialogOpen(false)}
