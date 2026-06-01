@@ -11,7 +11,7 @@ import { formatScore, formatDate } from "@/lib/formatters";
 
 export default function History() {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const games = useQuery(api.games.history);
 
   if (games === undefined) {
@@ -82,7 +82,7 @@ export default function History() {
                       {game.quizTitle}
                     </h3>
                     <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
-                      <span>{formatDate(game.playedAt)}</span>
+                      <span>{formatDate(game.playedAt, lang)}</span>
                       <span className="flex items-center gap-1">
                         <Users size={11} /> {game.playerCount}
                       </span>

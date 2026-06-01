@@ -29,7 +29,7 @@ function cloneQuestion(q: Question): Question {
 export default function QuizDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const toast = useToast();
 
   const quiz = useQuery(api.quizzes.get, id ? { id: id as Id<"quizzes"> } : "skip");
@@ -195,7 +195,7 @@ export default function QuizDetail() {
                 >
                   {quiz.isPublic ? t("common.public") : t("common.private")}
                 </span>
-                <span>{formatDate(quiz.createdAt)}</span>
+                <span>{formatDate(quiz.createdAt, lang)}</span>
               </div>
             </div>
           </div>

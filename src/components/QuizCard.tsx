@@ -9,7 +9,7 @@ interface QuizCardProps {
 }
 
 export function QuizCard({ quiz, onOpen }: QuizCardProps) {
-  const { t } = useTranslation();
+  const { t, lang } = useTranslation();
   const monogram = quiz.title.trim().charAt(0).toUpperCase() || "?";
 
   return (
@@ -55,7 +55,7 @@ export function QuizCard({ quiz, onOpen }: QuizCardProps) {
             <HelpCircle size={12} className="shrink-0" /> {quiz.questions.length}
           </span>
           <span className="h-1 w-1 rounded-full bg-gray-600" />
-          <span className="truncate">{formatDate(quiz.createdAt)}</span>
+          <span className="truncate">{formatDate(quiz.createdAt, lang)}</span>
         </div>
       </div>
 
