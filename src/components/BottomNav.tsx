@@ -26,7 +26,7 @@ export function BottomNav() {
   if (!isAuthenticated) return null;
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-40 safe-b safe-x sm:hidden">
+    <nav className="shrink-0 z-40 safe-b safe-x sm:hidden">
       <div className="mx-auto max-w-md px-3 pb-2">
         <div className="flex items-stretch justify-around rounded-2xl border border-white/10 bg-surface-800/90 backdrop-blur-xl shadow-card">
           {TABS.map(({ to, labelKey, icon: Icon }) => {
@@ -44,6 +44,7 @@ export function BottomNav() {
                 {active && (
                   <motion.span
                     layoutId="bottomnav-active"
+                    initial={false}
                     className="absolute inset-1 rounded-xl bg-gradient-to-br from-violet-600/25 to-fuchsia-600/20 border border-violet-500/30"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                   />

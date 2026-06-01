@@ -83,9 +83,9 @@ export default function JoinGame() {
   }
 
   return (
-    <div className="min-h-screen-dvh flex flex-col bg-animated relative overflow-y-auto">
+    <div className="fixed inset-0 flex h-screen-dvh flex-col bg-animated overflow-hidden">
       <AppHeader title={t("join.headerTitle")} back={isAuthenticated ? undefined : "/"} />
-      <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 safe-x pb-nav">
+      <div className="flex-1 min-h-0 overflow-y-auto flex flex-col items-center justify-center p-4 sm:p-6 safe-x">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

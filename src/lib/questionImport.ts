@@ -14,9 +14,6 @@ const VALID_TYPES: ReadonlySet<QuestionType> = new Set([
 ]);
 
 
-
-
-
 function normalizeQuestion(raw: unknown, label: string): Question {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
     throw new QuestionImportError(`${label}: očekáván objekt`);
@@ -83,9 +80,6 @@ function normalizeQuestion(raw: unknown, label: string): Question {
   return { text, type, options, correctIndex, timeLimit, points };
 }
 
-
-
-
 export function parseQuestionsJSON(source: string): Question[] {
   let parsed: unknown;
   try {
@@ -100,9 +94,6 @@ export function parseQuestionsJSON(source: string): Question[] {
   }
   return parsed.map((item, i) => normalizeQuestion(item, `Otázka ${i + 1}`));
 }
-
-
-
 
 
 function parseCsvLine(line: string, delim: string): string[] {
@@ -132,12 +123,6 @@ function parseCsvLine(line: string, delim: string): string[] {
   out.push(cur);
   return out.map((s) => s.trim());
 }
-
-
-
-
-
-
 
 
 export function parseQuestionsCSV(source: string): Question[] {
@@ -205,9 +190,6 @@ export function parseQuestionsCSV(source: string): Question[] {
     return normalizeQuestion(raw, `Řádek ${i + 2}`);
   });
 }
-
-
-
 
 export async function parseQuestionsFile(file: File): Promise<Question[]> {
   const name = file.name.toLowerCase();

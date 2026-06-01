@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useConvexAuth } from "convex/react";
 import { useAuthActions } from "@convex-dev/auth/react";
@@ -48,19 +48,6 @@ export function AppHeader({ title, back, actions, logout = false }: AppHeaderPro
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
 
-  const barRef = useRef<HTMLDivElement>(null);
-  const [barHeight, setBarHeight] = useState(0);
-
-  useLayoutEffect(() => {
-    const el = barRef.current;
-    if (!el) return;
-    const update = () => setBarHeight(el.offsetHeight);
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, []);
-
   async function handleLogout() {
     setLoggingOut(true);
     try {
@@ -78,8 +65,7 @@ export function AppHeader({ title, back, actions, logout = false }: AppHeaderPro
   }
 
   return (
-    <>
-      <div ref={barRef} className="fixed inset-x-0 top-0 z-30">
+    <div className="sticky top-0 z-30 shrink-0">
       <header className="safe-t safe-x border-b border-white/5 bg-surface-900/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-3">
         <div className="flex min-w-0 items-center gap-2">
@@ -150,9 +136,6 @@ export function AppHeader({ title, back, actions, logout = false }: AppHeaderPro
       </header>
 
       <ResumeBar />
-      </div>
-
-      <div aria-hidden style={{ height: barHeight }} />
 
       {logout && (
         <ConfirmDialog
@@ -165,6 +148,6 @@ export function AppHeader({ title, back, actions, logout = false }: AppHeaderPro
           onClose={() => setConfirmOpen(false)}
         />
       )}
-    </>
+    </div>
   );
 }

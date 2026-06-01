@@ -12,12 +12,6 @@ interface QuestionEditorProps {
   onRemove: () => void;
 }
 
-
-
-
-
-
-
 export function QuestionEditor({
   question,
   index,

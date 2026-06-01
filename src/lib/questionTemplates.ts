@@ -1,14 +1,5 @@
 import type { Question, QuestionType } from "@/types";
 
-
-
-
-
-
-
-
-
-
 export function emptyQuestionForType(type: QuestionType): Question {
   switch (type) {
     case "quiz":
@@ -41,10 +32,6 @@ export function emptyQuestionForType(type: QuestionType): Question {
   }
 }
 
-
-
-
-
 export function migrateQuestionType(q: Question, newType: QuestionType): Question {
   if (q.type === newType) return q;
   const base = emptyQuestionForType(newType);
@@ -55,9 +42,6 @@ export function migrateQuestionType(q: Question, newType: QuestionType): Questio
     points: q.points,
   };
 }
-
-
-
 
 export function isTextAnswerCorrect(expected: string, actual: string): boolean {
   return expected.trim().toLowerCase() === actual.trim().toLowerCase();

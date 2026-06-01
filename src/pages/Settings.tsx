@@ -18,10 +18,11 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen-dvh">
+    <div className="fixed inset-0 flex h-screen-dvh flex-col overflow-hidden">
       <AppHeader title={t("settings.title")} logout />
 
-      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x pb-nav sm:pb-10 flex flex-col gap-6">
+      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x sm:pb-10 flex flex-col gap-6">
         <section className="flex flex-col gap-3">
           <div className="flex items-center gap-2 text-gray-300">
             <Languages size={18} className="text-violet-300" />
@@ -53,6 +54,7 @@ export default function Settings() {
             })}
           </div>
         </section>
+      </div>
       </div>
 
       <BottomNav />

@@ -23,9 +23,10 @@ export default function History() {
   }
 
   return (
-    <div className="min-h-screen-dvh">
+    <div className="fixed inset-0 flex h-screen-dvh flex-col overflow-hidden">
       <AppHeader title={t("history.title")} />
-      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x pb-nav sm:pb-10">
+      <div className="flex-1 min-h-0 overflow-y-auto">
+      <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x sm:pb-10">
         <p className="text-gray-500 text-sm mb-5">
           {games.length === 0 ? t("history.none") : t("history.count", { count: games.length })}
         </p>
@@ -124,6 +125,7 @@ export default function History() {
             })}
           </div>
         )}
+      </div>
       </div>
       <BottomNav />
     </div>
