@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
 import { X } from "lucide-react";
 import { type ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
@@ -10,6 +11,7 @@ interface ModalProps {
 }
 
 export function Modal({ isOpen, onClose, title, children }: ModalProps) {
+  const { t } = useTranslation();
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
@@ -37,7 +39,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
               type="button"
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
-              aria-label="Zavřít"
+              aria-label={t("common.close")}
             >
               <X size={18} />
             </button>
@@ -45,4 +47,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         )}
         {children}
       </div>
-    </div>
+    </div>,
+    document.body,
+  );
+}

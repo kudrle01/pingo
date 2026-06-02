@@ -1,22 +1,9 @@
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
+import { AnswerOptions } from "@/components/play/AnswerOptions";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  Check,
-  CheckCircle2,
-  Circle,
-  Clock,
-  Diamond,
-  LoaderCircle,
-  SendHorizontal,
-  Square,
-  Triangle,
-  X,
-  XCircle,
-} from "lucide-react";
+import { CheckCircle2, Clock, LoaderCircle, XCircle } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
@@ -24,27 +11,6 @@ import { useCountdown } from "@/hooks/useCountdown";
 import { useTranslation } from "@/i18n/LanguageProvider";
 import { getAvatar } from "@/lib/avatars";
 import { formatScore } from "@/lib/formatters";
-import { isTextAnswerCorrect } from "@/lib/questionTemplates";
-
-const ANSWER_COLORS = [
-  { bg: "bg-[#e74c3c]", selected: "ring-4 ring-white shadow-xl" },
-  { bg: "bg-[#3498db]", selected: "ring-4 ring-white shadow-xl" },
-  { bg: "bg-[#f39c12]", selected: "ring-4 ring-white shadow-xl" },
-  { bg: "bg-[#2ecc71]", selected: "ring-4 ring-white shadow-xl" },
-];
-
-const ANSWER_ICONS = [Triangle, Diamond, Circle, Square];
-
-const buttonVariants = {
-  hidden: { opacity: 0, scale: 0.6, y: 30 },
-  show: (i: number) => ({
-    opacity: 1,
-    scale: 1,
-    y: 0,
-    transition: { delay: i * 0.08, type: "spring" as const, bounce: 0.45 },
-  }),
-  tap: { scale: 0.93 },
-};
 
 function TimerBar({ duration, onExpire }: { duration: number; onExpire: () => void }) {
   const { timeLeft, progress } = useCountdown({ duration, onExpire });
@@ -345,99 +311,15 @@ export default function PlayGame() {
         )}
       </AnimatePresence>
 
-      {currentQ.type === "quiz" && (
-        <motion.div
-          key={`grid-${game.currentQuestion}`}
-          variants={{ show: { transition: { staggerChildren: 0.07 } } }}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-        >
-          {currentQ.options.map((option, idx) => {
-            const Icon = ANSWER_ICONS[idx] ?? Circle;
-            const col = ANSWER_COLORS[idx] ?? ANSWER_COLORS[0];
-            const isSelected = answered && idx === selectedAnswer;
-
-            return (
-              <motion.button
-                key={idx}
-                custom={idx}
-                variants={buttonVariants}
-                whileTap="tap"
-                onClick={() => commitAnswer(idx, idx === currentQ.correctIndex)}
-                disabled={answered}
-                className={[
-                  "rounded-2xl p-4 min-h-[72px] sm:min-h-[88px] text-white font-bold text-left flex items-center gap-3 shadow-lg transition-all duration-200 active:scale-[0.97]",
-                  col.bg,
-                  isSelected ? col.selected : "",
-                  answered && !isSelected ? "opacity-40 scale-95" : "",
-                  "disabled:cursor-not-allowed",
-                ].join(" ")}
-              >
-                <Icon size={20} className="shrink-0" />
-                <span className="min-w-0 break-words text-sm">{option}</span>
-              </motion.button>
-            );
-          })}
-        </motion.div>
-      )}
-
-      {currentQ.type === "true_false" && (
-        <motion.div
-          key={`tf-${game.currentQuestion}`}
-          variants={{ show: { transition: { staggerChildren: 0.1 } } }}
-          initial="hidden"
-          animate="show"
-          className="grid grid-cols-1 sm:grid-cols-2 gap-3"
-        >
-          {currentQ.options.map((option, idx) => {
-            const isSelected = answered && idx === selectedAnswer;
-            return (
-              <motion.button
-                key={idx}
-                custom={idx}
-                variants={buttonVariants}
-                whileTap="tap"
-                onClick={() => commitAnswer(idx, idx === currentQ.correctIndex)}
-                disabled={answered}
-                className={[
-                  "rounded-2xl p-6 text-white font-bold text-xl flex flex-col items-center justify-center gap-2 text-center break-words transition-all duration-200",
-                  idx === 0 ? "bg-[#2ecc71]" : "bg-[#e74c3c]",
-                  isSelected ? "ring-4 ring-white shadow-xl" : "",
-                  answered && !isSelected ? "opacity-40 scale-95" : "",
-                  "disabled:cursor-not-allowed",
-                ].join(" ")}
-              >
-                {idx === 0 ? (
-                  <Check size={32} className="shrink-0" />
-                ) : (
-                  <X size={32} className="shrink-0" />
-                )}
-                <span className="min-w-0 break-words">{option}</span>
-              </motion.button>
-            );
-          })}
-        </motion.div>
-      )}
-
-      {currentQ.type === "type_answer" && (
-        <motion.form
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (answered) return;
-            const correct = isTextAnswerCorrect(currentQ.options[0] ?? "", textAnswer);
-            commitAnswer(0, correct);
-          }}
-          className="flex flex-col gap-3"
-        >
-          <Input
-            placeholder={t("play.typePlaceholder")}
-            value={textAnswer}
-            onChange={(e) => setTextAnswer(e.target.value)}
-            disabled={answered}
-            autoFocus
-          />
-          <Button type="submit" size="lg" disabled={answered || textAnswer.trim().length === 0}>
-            
+      <AnswerOptions
+        question={currentQ}
+        questionIndex={game.currentQuestion}
+        answered={answered}
+        selectedAnswer={selectedAnswer}
+        textAnswer={textAnswer}
+        onTextAnswerChange={setTextAnswer}
+        onAnswer={commitAnswer}
+      />
+    </div>
+  );
+}

@@ -1,6 +1,8 @@
 import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
+import { IconInput } from "@/components/ui/IconInput";
 import { Input } from "@/components/ui/Input";
+import { PasswordInput } from "@/components/ui/PasswordInput";
 import { useTranslation } from "@/i18n/LanguageProvider";
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useConvexAuth } from "convex/react";
@@ -8,12 +10,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   ArrowRight,
-  Eye,
-  EyeOff,
   Globe,
   KeyRound,
   LayoutDashboard,
-  Lock,
   LogIn,
   Mail,
   ShieldCheck,
@@ -26,6 +25,18 @@ import { useNavigate } from "react-router-dom";
 
 type AuthMode = "join" | "login" | "register";
 type FlowStep = null | "verify" | "reset";
+
+function CodeInput(props: React.ComponentProps<typeof Input>) {
+  return (
+    <Input
+      placeholder="123456"
+      inputMode="numeric"
+      maxLength={6}
+      className="text-center text-2xl font-black tracking-[0.3em]"
+      {...props}
+    />
+  );
+}
 
 export default function Home() {
   const navigate = useNavigate();
@@ -40,7 +51,6 @@ export default function Home() {
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -56,6 +66,8 @@ export default function Home() {
   }, [isAuthenticated, navigate]);
 
   if (isAuthenticated) return null;
+
+  const onlyDigits = (value: string) => value.replace(/\D/g, "").slice(0, 6);
 
   function handleJoin(e: React.FormEvent) {
     e.preventDefault();
@@ -221,14 +233,10 @@ export default function Home() {
                   {t("home.verify.subtitle", { email: pendingEmail })}
                 </p>
               </div>
-              <Input
-                placeholder="123456"
+              <CodeInput
                 value={code}
-                onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                inputMode="numeric"
-                maxLength={6}
+                onChange={(e) => setCode(onlyDigits(e.target.value))}
                 autoFocus
-                className="text-center text-2xl font-black tracking-[0.3em]"
               />
               {errorBox}
               <Button
@@ -259,21 +267,15 @@ export default function Home() {
 
               {!resetCodeSent ? (
                 <>
-                  <div className="relative">
-                    <Mail
-                      size={16}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                    />
-                    <Input
-                      type="email"
-                      placeholder="email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="pl-9"
-                      autoComplete="email"
-                      autoFocus
-                    />
-                  </div>
+                  <IconInput
+                    icon={<Mail size={16} />}
+                    type="email"
+                    placeholder="email@example.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    autoComplete="email"
+                    autoFocus
+                  />
                   {errorBox}
                   <Button
                     type="submit"
@@ -287,36 +289,17 @@ export default function Home() {
                 </>
               ) : (
                 <>
-                  <Input
-                    placeholder="123456"
+                  <CodeInput
                     value={code}
-                    onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    inputMode="numeric"
-                    maxLength={6}
+                    onChange={(e) => setCode(onlyDigits(e.target.value))}
                     autoFocus
-                    className="text-center text-2xl font-black tracking-[0.3em]"
                   />
-                  <div className="relative">
-                    <Lock
-                      size={16}
-                      className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                    />
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder={t("home.reset.newPassword")}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="pl-9 pr-10"
-                      autoComplete="new-password"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPassword((v) => !v)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                    >
-                      {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </button>
-                  </div>
+                  <PasswordInput
+                    placeholder={t("home.reset.newPassword")}
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    autoComplete="new-password"
+                  />
                   {errorBox}
                   <Button
                     type="submit"
@@ -371,14 +354,10 @@ export default function Home() {
                       <p className="text-white font-black text-lg mb-0.5">{t("home.join.title")}</p>
                       <p className="text-gray-500 text-sm">{t("home.join.subtitle")}</p>
                     </div>
-                    <Input
-                      placeholder="123456"
+                    <CodeInput
                       value={pin}
-                      onChange={(e) => setPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      maxLength={6}
-                      inputMode="numeric"
+                      onChange={(e) => setPin(onlyDigits(e.target.value))}
                       autoFocus
-                      className="text-center text-2xl font-black tracking-[0.3em]"
                     />
                     <Button type="submit" size="lg" disabled={pin.length !== 6} className="w-full">
                       {t("home.join.cta")} <ArrowRight size={18} />
@@ -401,41 +380,20 @@ export default function Home() {
                       </p>
                       <p className="text-gray-500 text-sm">{t("home.login.subtitle")}</p>
                     </div>
-                    <div className="relative">
-                      <Mail
-                        size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                      />
-                      <Input
-                        type="email"
-                        placeholder="email@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-9"
-                        autoComplete="email"
-                      />
-                    </div>
-                    <div className="relative">
-                      <Lock
-                        size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                      />
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder={t("home.password")}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-9 pr-10"
-                        autoComplete="current-password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                      >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </button>
-                    </div>
+                    <IconInput
+                      icon={<Mail size={16} />}
+                      type="email"
+                      placeholder="email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                    />
+                    <PasswordInput
+                      placeholder={t("home.password")}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="current-password"
+                    />
                     <button
                       type="button"
                       onClick={startReset}
@@ -471,55 +429,28 @@ export default function Home() {
                       </p>
                       <p className="text-gray-500 text-sm">{t("home.register.subtitle")}</p>
                     </div>
-                    <div className="relative">
-                      <User
-                        size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                      />
-                      <Input
-                        type="text"
-                        placeholder={t("home.name")}
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        className="pl-9"
-                        autoComplete="name"
-                      />
-                    </div>
-                    <div className="relative">
-                      <Mail
-                        size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                      />
-                      <Input
-                        type="email"
-                        placeholder="email@example.com"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="pl-9"
-                        autoComplete="email"
-                      />
-                    </div>
-                    <div className="relative">
-                      <Lock
-                        size={16}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                      />
-                      <Input
-                        type={showPassword ? "text" : "password"}
-                        placeholder={t("home.register.passwordPlaceholder")}
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        className="pl-9 pr-10"
-                        autoComplete="new-password"
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300"
-                      >
-                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                      </button>
-                    </div>
+                    <IconInput
+                      icon={<User size={16} />}
+                      type="text"
+                      placeholder={t("home.name")}
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      autoComplete="name"
+                    />
+                    <IconInput
+                      icon={<Mail size={16} />}
+                      type="email"
+                      placeholder="email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
+                    />
+                    <PasswordInput
+                      placeholder={t("home.register.passwordPlaceholder")}
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      autoComplete="new-password"
+                    />
                     {errorBox}
                     <Button
                       type="submit"
@@ -556,4 +487,8 @@ export default function Home() {
               )}
             </>
           )}
-        </motion.di
+        </motion.div>
+      </div>
+    </div>
+  );
+}

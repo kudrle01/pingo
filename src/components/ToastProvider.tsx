@@ -1,3 +1,4 @@
+import { useTranslation } from "@/i18n/LanguageProvider";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CheckCircle2, Info, X } from "lucide-react";
 import { type ReactNode, createContext, useCallback, useContext, useRef, useState } from "react";
@@ -37,11 +38,12 @@ const ICON_COLORS: Record<ToastType, string> = {
 };
 
 export function ToastProvider({ children }: { children: ReactNode }) {
+  const { t } = useTranslation();
   const [toasts, setToasts] = useState<ToastItem[]>([]);
   const idRef = useRef(0);
 
   const remove = useCallback((id: number) => {
-    setToasts((prev) => prev.filter((t) => t.id !== id));
+    setToasts((prev) => prev.filter((item) => item.id !== id));
   }, []);
 
   const push = useCallback(
@@ -58,7 +60,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     error: (m) => push("error", m),
     info: (m) => push("info", m),
   });
-  // keep closure fresh
   api.current = {
     success: (m) => push("success", m),
     error: (m) => push("error", m),
@@ -89,7 +90,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 <button
                   type="button"
                   onClick={() => remove(toast.id)}
-                  aria-label="Zavřít"
+                  aria-label={t("common.close")}
                   className="shrink-0 opacity-60 transition-opacity hover:opacity-100"
                 >
                   <X size={16} />

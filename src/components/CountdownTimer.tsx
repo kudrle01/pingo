@@ -1,4 +1,5 @@
 import { useCountdown } from "@/hooks/useCountdown";
+import { useTranslation } from "@/i18n/LanguageProvider";
 
 interface CountdownTimerProps {
   duration: number;
@@ -14,6 +15,7 @@ const COLOR: Record<"green" | "yellow" | "red", { text: string; stroke: string }
 
 export function CountdownTimer({ duration, onExpire, className = "" }: CountdownTimerProps) {
   const { timeLeft, progress } = useCountdown({ duration, onExpire });
+  const { t } = useTranslation();
 
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
@@ -27,7 +29,7 @@ export function CountdownTimer({ duration, onExpire, className = "" }: Countdown
     <div
       className={`relative inline-flex items-center justify-center ${className}`}
       role="timer"
-      aria-label={`Zbývá ${timeLeft} sekund`}
+      aria-label={t("common.timeLeft", { n: timeLeft })}
     >
       <svg width="100" height="100" className="rotate-[-90deg]">
         <circle

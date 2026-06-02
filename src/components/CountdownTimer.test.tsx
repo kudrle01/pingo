@@ -1,6 +1,10 @@
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { LanguageProvider } from "@/i18n/LanguageProvider";
 import { act, render, screen } from "@testing-library/react";
+import type { ReactElement } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const renderTimer = (ui: ReactElement) => render(<LanguageProvider>{ui}</LanguageProvider>);
 
 describe("CountdownTimer", () => {
   beforeEach(() => {
@@ -12,14 +16,14 @@ describe("CountdownTimer", () => {
   });
 
   it("zobrazí správný počáteční čas", () => {
-    render(<CountdownTimer duration={20} />);
+    renderTimer(<CountdownTimer duration={20} />);
 
     expect(screen.getByRole("timer")).toBeInTheDocument();
     expect(screen.getByText("20")).toBeInTheDocument();
   });
 
   it("odpočítává sekundy", async () => {
-    render(<CountdownTimer duration={10} />);
+    renderTimer(<CountdownTimer duration={10} />);
     expect(screen.getByText("10")).toBeInTheDocument();
 
     act(() => {
@@ -31,7 +35,7 @@ describe("CountdownTimer", () => {
 
   it("zavolá onExpire callback po vypršení", () => {
     const onExpire = vi.fn();
-    render(<CountdownTimer duration={5} onExpire={onExpire} />);
+    renderTimer(<CountdownTimer duration={5} onExpire={onExpire} />);
 
     act(() => {
       vi.advanceTimersByTime(5000);
@@ -41,7 +45,7 @@ describe("CountdownTimer", () => {
   });
 
   it("zobrazí 0 po vypršení", () => {
-    render(<CountdownTimer duration={3} />);
+    renderTimer(<CountdownTimer duration={3} />);
 
     act(() => {
       vi.advanceTimersByTime(3000);
@@ -52,7 +56,7 @@ describe("CountdownTimer", () => {
 
   it("onExpire se nevolá pokud čas nevyprší", () => {
     const onExpire = vi.fn();
-    render(<CountdownTimer duration={10} onExpire={onExpire} />);
+    renderTimer(<CountdownTimer duration={10} onExpire={onExpire} />);
 
     act(() => {
       vi.advanceTimersByTime(5000);

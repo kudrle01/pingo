@@ -8,12 +8,14 @@ export const LANGUAGES: { code: Lang; label: string; flag: string }[] = [
 type Dict = Record<string, string>;
 
 const cs: Dict = {
-  // common
   "common.back": "Zpět",
   "common.cancel": "Zrušit",
   "common.save": "Uložit",
   "common.delete": "Smazat",
   "common.edit": "Upravit",
+  "common.close": "Zavřít",
+  "common.togglePassword": "Zobrazit / skrýt heslo",
+  "common.timeLeft": "Zbývá {n} s",
   "common.discard": "Zahodit",
   "common.loading": "Načítám…",
   "common.public": "Veřejný",
@@ -21,20 +23,17 @@ const cs: Dict = {
   "common.points": "b.",
   "common.seconds": "s",
 
-  // nav
   "nav.quizzes": "Kvízy",
   "nav.play": "Hrát",
   "nav.history": "Historie",
   "nav.settings": "Nastavení",
 
-  // logout
   "logout.button": "Odhlásit se",
   "logout.title": "Odhlásit se?",
   "logout.desc":
     "Po odhlášení se vrátíš na úvodní stránku a chráněné části aplikace už nepůjdou otevřít bez přihlášení.",
   "logout.confirm": "Odhlásit se",
 
-  // home
   "home.tagline": "Živé kvízy pro všechny",
   "home.tab.join": "Hrát",
   "home.tab.login": "Přihlásit",
@@ -57,8 +56,21 @@ const cs: Dict = {
   "home.err.login": "Špatný e-mail nebo heslo.",
   "home.err.register": "Registrace se nepodařila. Zkus jiný e-mail.",
   "home.err.google": "Přihlášení přes Google se nepodařilo.",
+  "home.back": "Zpět",
+  "home.forgot": "Zapomněli jste heslo?",
+  "home.codeSent": "Kód jsme poslali na tvůj e-mail.",
+  "home.err.code": "Neplatný nebo expirovaný kód.",
+  "home.verify.title": "Ověř svůj e-mail",
+  "home.verify.subtitle": "Zadej 6místný kód, který jsme poslali na {email}.",
+  "home.verify.cta": "Ověřit a pokračovat",
+  "home.reset.title": "Obnova hesla",
+  "home.reset.subtitle": "Pošleme ti kód pro obnovení hesla na e-mail.",
+  "home.reset.codeSentTitle": "Zadej kód z e-mailu a nové heslo.",
+  "home.reset.send": "Poslat kód",
+  "home.reset.newPassword": "Nové heslo (min. 8 znaků)",
+  "home.reset.cta": "Změnit heslo",
+  "home.reset.err": "Obnovení hesla se nepodařilo. Zkontroluj kód.",
 
-  // dashboard
   "dashboard.title": "Moje kvízy",
   "dashboard.new": "Nový kvíz",
   "dashboard.loading": "Načítám kvízy…",
@@ -67,7 +79,6 @@ const cs: Dict = {
   "dashboard.empty.subtitle": "Vytvoř svůj první kvíz!",
   "dashboard.empty.cta": "Vytvořit kvíz",
 
-  // history
   "history.title": "Historie her",
   "history.none": "Zatím nic neodehráno",
   "history.count": "Hry: {count}",
@@ -81,7 +92,6 @@ const cs: Dict = {
   "history.hosted": "Hostoval jsi",
   "history.yourPlace": "Tvé místo",
 
-  // join
   "join.headerTitle": "Hrát",
   "join.title": "Připojit se",
   "join.subtitle": "Vygeneruj si avatar a zadej přezdívku",
@@ -96,7 +106,6 @@ const cs: Dict = {
   "join.err.nickname": "Tahle přezdívka už je ve hře obsazená.",
   "join.err.generic": "Nepodařilo se připojit. Zkus to znovu.",
 
-  // quiz form
   "quizForm.createTitle": "Nový kvíz",
   "quizForm.editTitle": "Upravit kvíz",
   "quizForm.name": "Název kvízu",
@@ -109,7 +118,6 @@ const cs: Dict = {
   "quizForm.notFound": "Kvíz nenalezen.",
   "quizForm.backDashboard": "Zpět na kvízy",
 
-  // question editor
   "qedit.questionN": "Otázka {n}",
   "qedit.remove": "Odstranit",
   "qedit.text": "Text otázky",
@@ -124,7 +132,6 @@ const cs: Dict = {
   "qedit.correctAnswer": "Správná odpověď",
   "qedit.typeAnswerPlaceholder": "Např. Paříž",
 
-  // import
   "import.button": "Importovat otázky",
   "import.formats": " (JSON / CSV)",
   "import.help": "Návod k importu",
@@ -141,7 +148,6 @@ const cs: Dict = {
   "import.help.typeTa":
     "type_answer: správná textová odpověď je v první možnosti, correctIndex je 0.",
 
-  // quiz detail
   "detail.title": "Detail kvízu",
   "detail.notFound": "Kvíz nenalezen.",
   "detail.backQuizzes": "Zpět na kvízy",
@@ -163,7 +169,6 @@ const cs: Dict = {
   "detail.removeQuestion.title": "Odstranit otázku?",
   "detail.removeQuestion.desc": "Otázka bude z kvízu trvale odstraněna.",
 
-  // host
   "host.loading": "Načítám hru…",
   "host.question": "Otázka",
   "host.pin": "PIN hry",
@@ -183,7 +188,6 @@ const cs: Dict = {
     "Hra se okamžitě označí jako dokončená a všichni hráči přejdou na výsledky. Aktuální otázka už nepůjde znovu otevřít.",
   "host.end.confirm": "Ukončit hru",
 
-  // play
   "play.waitingGame": "Čekám na hru…",
   "play.waitingStart": "Čekám na spuštění hry…",
   "play.hostSoon": "Hostitel brzy začne",
@@ -199,7 +203,6 @@ const cs: Dict = {
   "play.typePlaceholder": "Napište odpověď…",
   "play.submit": "Odeslat odpověď",
 
-  // results
   "results.loading": "Načítám výsledky…",
   "results.finalTitle": "Konečné pořadí",
   "results.title": "Výsledky",
@@ -209,21 +212,17 @@ const cs: Dict = {
   "results.home": "Domů",
   "results.again": "Hrát znovu",
 
-  // leaderboard
   "lb.empty": "Zatím žádní hráči.",
   "lb.you": "(ty)",
 
-  // settings
   "settings.title": "Nastavení",
   "settings.language": "Jazyk",
   "settings.language.desc": "Vyber jazyk aplikace.",
 
-  // resume bar
   "resume.label": "Probíhá hra",
   "resume.lobby": "Hra čeká v lobby",
   "resume.cta": "Vrátit se",
 
-  // toasts
   "toast.quizCreated": "Kvíz vytvořen",
   "toast.quizUpdated": "Změny uloženy",
   "toast.quizDeleted": "Kvíz smazán",
@@ -241,12 +240,14 @@ const cs: Dict = {
 };
 
 const en: Dict = {
-  // common
   "common.back": "Back",
   "common.cancel": "Cancel",
   "common.save": "Save",
   "common.delete": "Delete",
   "common.edit": "Edit",
+  "common.close": "Close",
+  "common.togglePassword": "Show / hide password",
+  "common.timeLeft": "{n}s left",
   "common.discard": "Discard",
   "common.loading": "Loading…",
   "common.public": "Public",
@@ -254,20 +255,17 @@ const en: Dict = {
   "common.points": "pts",
   "common.seconds": "s",
 
-  // nav
   "nav.quizzes": "Quizzes",
   "nav.play": "Play",
   "nav.history": "History",
   "nav.settings": "Settings",
 
-  // logout
   "logout.button": "Log out",
   "logout.title": "Log out?",
   "logout.desc":
     "After logging out you'll return to the home screen and protected parts of the app won't be accessible without signing in.",
   "logout.confirm": "Log out",
 
-  // home
   "home.tagline": "Live quizzes for everyone",
   "home.tab.join": "Play",
   "home.tab.login": "Sign in",
@@ -290,8 +288,21 @@ const en: Dict = {
   "home.err.login": "Wrong email or password.",
   "home.err.register": "Sign up failed. Try a different email.",
   "home.err.google": "Google sign-in failed.",
+  "home.back": "Back",
+  "home.forgot": "Forgot password?",
+  "home.codeSent": "We've sent a code to your email.",
+  "home.err.code": "Invalid or expired code.",
+  "home.verify.title": "Verify your email",
+  "home.verify.subtitle": "Enter the 6-digit code we sent to {email}.",
+  "home.verify.cta": "Verify and continue",
+  "home.reset.title": "Reset password",
+  "home.reset.subtitle": "We'll email you a code to reset your password.",
+  "home.reset.codeSentTitle": "Enter the code from your email and a new password.",
+  "home.reset.send": "Send code",
+  "home.reset.newPassword": "New password (min. 8 chars)",
+  "home.reset.cta": "Change password",
+  "home.reset.err": "Password reset failed. Check the code.",
 
-  // dashboard
   "dashboard.title": "My quizzes",
   "dashboard.new": "New quiz",
   "dashboard.loading": "Loading quizzes…",
@@ -300,7 +311,6 @@ const en: Dict = {
   "dashboard.empty.subtitle": "Create your first quiz!",
   "dashboard.empty.cta": "Create a quiz",
 
-  // history
   "history.title": "Game history",
   "history.none": "Nothing played yet",
   "history.count": "Games: {count}",
@@ -314,7 +324,6 @@ const en: Dict = {
   "history.hosted": "You hosted",
   "history.yourPlace": "Your place",
 
-  // join
   "join.headerTitle": "Play",
   "join.title": "Join",
   "join.subtitle": "Generate an avatar and enter a nickname",
@@ -329,7 +338,6 @@ const en: Dict = {
   "join.err.nickname": "That nickname is already taken.",
   "join.err.generic": "Couldn't join. Please try again.",
 
-  // quiz form
   "quizForm.createTitle": "New quiz",
   "quizForm.editTitle": "Edit quiz",
   "quizForm.name": "Quiz name",
@@ -342,7 +350,6 @@ const en: Dict = {
   "quizForm.notFound": "Quiz not found.",
   "quizForm.backDashboard": "Back to quizzes",
 
-  // question editor
   "qedit.questionN": "Question {n}",
   "qedit.remove": "Remove",
   "qedit.text": "Question text",
@@ -357,7 +364,6 @@ const en: Dict = {
   "qedit.correctAnswer": "Correct answer",
   "qedit.typeAnswerPlaceholder": "E.g. Paris",
 
-  // import
   "import.button": "Import questions",
   "import.formats": " (JSON / CSV)",
   "import.help": "Import guide",
@@ -374,7 +380,6 @@ const en: Dict = {
   "import.help.typeTa":
     "type_answer: the correct text answer is in the first option, correctIndex is 0.",
 
-  // quiz detail
   "detail.title": "Quiz detail",
   "detail.notFound": "Quiz not found.",
   "detail.backQuizzes": "Back to quizzes",
@@ -397,7 +402,6 @@ const en: Dict = {
   "detail.removeQuestion.title": "Remove question?",
   "detail.removeQuestion.desc": "The question will be permanently removed from the quiz.",
 
-  // host
   "host.loading": "Loading game…",
   "host.question": "Question",
   "host.pin": "Game PIN",
@@ -417,7 +421,6 @@ const en: Dict = {
     "The game will immediately be marked as finished and all players will move to the results. The current question can't be reopened.",
   "host.end.confirm": "End game",
 
-  // play
   "play.waitingGame": "Waiting for the game…",
   "play.waitingStart": "Waiting for the game to start…",
   "play.hostSoon": "The host will start soon",
@@ -433,7 +436,6 @@ const en: Dict = {
   "play.typePlaceholder": "Type your answer…",
   "play.submit": "Submit answer",
 
-  // results
   "results.loading": "Loading results…",
   "results.finalTitle": "Final standings",
   "results.title": "Results",
@@ -443,21 +445,17 @@ const en: Dict = {
   "results.home": "Home",
   "results.again": "Play again",
 
-  // leaderboard
   "lb.empty": "No players yet.",
   "lb.you": "(you)",
 
-  // settings
   "settings.title": "Settings",
   "settings.language": "Language",
   "settings.language.desc": "Choose the app language.",
 
-  // resume bar
   "resume.label": "Game in progress",
   "resume.lobby": "Game waiting in lobby",
   "resume.cta": "Resume",
 
-  // toasts
   "toast.quizCreated": "Quiz created",
   "toast.quizUpdated": "Changes saved",
   "toast.quizDeleted": "Quiz deleted",

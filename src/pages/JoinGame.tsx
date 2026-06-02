@@ -188,4 +188,11 @@ export default function JoinGame() {
               className="w-full"
             >
               {t("join.cta")} <ArrowRight size={18} />
-            </But
+            </Button>
+          </form>
+        </motion.div>
+      </div>
+      {isAuthenticated && <BottomNav />}
+    </div>
+  );
+}
