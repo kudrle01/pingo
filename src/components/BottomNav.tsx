@@ -1,8 +1,8 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "@/i18n/LanguageProvider";
 import { useConvexAuth } from "convex/react";
 import { motion } from "framer-motion";
-import { LayoutGrid, Gamepad2, History, Settings, type LucideIcon } from "lucide-react";
-import { useTranslation } from "@/i18n/LanguageProvider";
+import { Gamepad2, History, LayoutGrid, type LucideIcon, Settings } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
 
 interface Tab {
   to: string;
@@ -31,8 +31,7 @@ export function BottomNav() {
         <div className="flex items-stretch justify-around rounded-2xl border border-white/10 bg-surface-800/90 backdrop-blur-xl shadow-card">
           {TABS.map(({ to, labelKey, icon: Icon }) => {
             const active =
-              location.pathname === to ||
-              (to !== "/dashboard" && location.pathname.startsWith(to));
+              location.pathname === to || (to !== "/dashboard" && location.pathname.startsWith(to));
             return (
               <button
                 key={to}

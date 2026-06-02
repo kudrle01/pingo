@@ -14,10 +14,8 @@ const variantClasses: Record<Variant, string> = {
     "bg-gradient-to-r from-violet-600 to-fuchsia-600 hover:from-violet-500 hover:to-fuchsia-500 text-white shadow-lg shadow-violet-500/30 hover:shadow-violet-500/50 active:scale-[0.98]",
   secondary:
     "bg-surface-700 hover:bg-surface-600 border border-white/10 hover:border-white/20 text-white active:scale-[0.98]",
-  danger:
-    "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/20 active:scale-[0.98]",
-  ghost:
-    "bg-transparent hover:bg-white/5 text-gray-300 hover:text-white active:scale-[0.98]",
+  danger: "bg-red-600 hover:bg-red-500 text-white shadow-lg shadow-red-500/20 active:scale-[0.98]",
+  ghost: "bg-transparent hover:bg-white/5 text-gray-300 hover:text-white active:scale-[0.98]",
 };
 
 const sizeClasses: Record<Size, string> = {
@@ -37,7 +35,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     return (
       <button
@@ -55,14 +53,25 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && (
           <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+            />
           </svg>
         )}
         {children}
       </button>
     );
-  }
+  },
 );
 
 Button.displayName = "Button";

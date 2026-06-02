@@ -1,6 +1,6 @@
+import { X } from "lucide-react";
 import { type ReactNode, useEffect } from "react";
 import { createPortal } from "react-dom";
-import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -23,7 +23,6 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
 
   return createPortal(
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-
       <div
         className="absolute inset-0 bg-black/70 backdrop-blur-sm"
         onClick={onClose}
@@ -35,6 +34,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold text-white">{title}</h2>
             <button
+              type="button"
               onClick={onClose}
               className="text-gray-400 hover:text-white transition-colors"
               aria-label="Zavřít"
@@ -45,7 +45,4 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
         )}
         {children}
       </div>
-    </div>,
-    document.body
-  );
-}
+    </div>

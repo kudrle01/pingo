@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
+import { mutation, query } from "./_generated/server";
 
 export const list = query({
   args: { authorId: v.optional(v.string()) },
@@ -34,16 +34,12 @@ export const create = mutation({
     questions: v.array(
       v.object({
         text: v.string(),
-        type: v.union(
-          v.literal("quiz"),
-          v.literal("true_false"),
-          v.literal("type_answer")
-        ),
+        type: v.union(v.literal("quiz"), v.literal("true_false"), v.literal("type_answer")),
         options: v.array(v.string()),
         correctIndex: v.number(),
         timeLimit: v.number(),
         points: v.number(),
-      })
+      }),
     ),
   },
   handler: async (ctx, args) => {
@@ -63,17 +59,13 @@ export const update = mutation({
       v.array(
         v.object({
           text: v.string(),
-          type: v.union(
-            v.literal("quiz"),
-            v.literal("true_false"),
-            v.literal("type_answer")
-          ),
+          type: v.union(v.literal("quiz"), v.literal("true_false"), v.literal("type_answer")),
           options: v.array(v.string()),
           correctIndex: v.number(),
           timeLimit: v.number(),
           points: v.number(),
-        })
-      )
+        }),
+      ),
     ),
   },
   handler: async (ctx, { id, ...patch }) => {

@@ -1,9 +1,5 @@
-import { describe, it, expect } from "vitest";
-import {
-  parseQuestionsJSON,
-  parseQuestionsCSV,
-  QuestionImportError,
-} from "./questionImport";
+import { describe, expect, it } from "vitest";
+import { QuestionImportError, parseQuestionsCSV, parseQuestionsJSON } from "./questionImport";
 
 describe("parseQuestionsJSON", () => {
   it("naparsuje pole platných otázek všech tří typů", () => {
@@ -119,8 +115,7 @@ describe("parseQuestionsCSV", () => {
   });
 
   it("vyhodí chybu když je jen hlavička", () => {
-    const csv =
-      "text,type,option1,option2,option3,option4,correctIndex,timeLimit,points";
+    const csv = "text,type,option1,option2,option3,option4,correctIndex,timeLimit,points";
     expect(() => parseQuestionsCSV(csv)).toThrow(/alespoň jednu/);
   });
 });

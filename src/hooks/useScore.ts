@@ -1,14 +1,11 @@
-import { useState } from "react";
 import { calculateScore } from "@/lib/scoring";
+import { useState } from "react";
 
 interface ScoreState {
   total: number;
   streak: number;
   lastPoints: number;
 }
-
-
-
 
 export function useScore() {
   const [state, setState] = useState<ScoreState>({
@@ -21,15 +18,9 @@ export function useScore() {
     isCorrect: boolean,
     timeLimit: number,
     answeredInMs: number,
-    basePoints: number
+    basePoints: number,
   ): number {
-    const points = calculateScore(
-      isCorrect,
-      timeLimit,
-      answeredInMs,
-      basePoints,
-      state.streak
-    );
+    const points = calculateScore(isCorrect, timeLimit, answeredInMs, basePoints, state.streak);
 
     setState((prev) => ({
       total: prev.total + points,

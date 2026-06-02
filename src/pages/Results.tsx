@@ -1,14 +1,14 @@
-import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery } from "convex/react";
-import { motion } from "framer-motion";
-import { Home, RotateCcw, ListOrdered, Trophy, ArrowLeft } from "lucide-react";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import { Podium } from "@/components/Podium";
-import { Leaderboard } from "@/components/Leaderboard";
 import { AppHeader } from "@/components/AppHeader";
+import { Leaderboard } from "@/components/Leaderboard";
+import { Podium } from "@/components/Podium";
 import { Button } from "@/components/ui/Button";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import { motion } from "framer-motion";
+import { ArrowLeft, Home, ListOrdered, RotateCcw, Trophy } from "lucide-react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
 export default function Results() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -19,10 +19,7 @@ export default function Results() {
   const playerId = searchParams.get("playerId");
   const review = searchParams.get("review") === "1";
   const game = useQuery(api.games.get, { id: gameId as Id<"games"> });
-  const players = useQuery(
-    api.players.getLeaderboard,
-    game ? { gameId: game._id } : "skip"
-  );
+  const players = useQuery(api.players.getLeaderboard, game ? { gameId: game._id } : "skip");
 
   if (!game || !players) {
     return (
@@ -92,7 +89,11 @@ export default function Results() {
               <Button className="flex-1" onClick={() => navigate("/", { replace: true })}>
                 <Home size={16} /> {t("results.home")}
               </Button>
-              <Button className="flex-1" variant="secondary" onClick={() => navigate("/join", { replace: true })}>
+              <Button
+                className="flex-1"
+                variant="secondary"
+                onClick={() => navigate("/join", { replace: true })}
+              >
                 <RotateCcw size={16} /> {t("results.again")}
               </Button>
             </>

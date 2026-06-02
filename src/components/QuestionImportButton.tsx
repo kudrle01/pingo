@@ -1,14 +1,11 @@
-import { useRef, useState } from "react";
-import { HelpCircle, Upload } from "lucide-react";
+import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
-import {
-  parseQuestionsFile,
-  QuestionImportError,
-} from "@/lib/questionImport";
 import { useTranslation } from "@/i18n/LanguageProvider";
-import { useToast } from "@/components/ToastProvider";
+import { QuestionImportError, parseQuestionsFile } from "@/lib/questionImport";
 import type { Question } from "@/types";
+import { HelpCircle, Upload } from "lucide-react";
+import { useRef, useState } from "react";
 
 interface QuestionImportButtonProps {
   onImport: (questions: Question[]) => void;
@@ -58,7 +55,8 @@ export function QuestionImportButton({ onImport }: QuestionImportButtonProps) {
         >
           <Upload size={16} className="shrink-0" />
           <span className="truncate">
-            {t("import.button")}<span className="hidden sm:inline">{t("import.formats")}</span>
+            {t("import.button")}
+            <span className="hidden sm:inline">{t("import.formats")}</span>
           </span>
         </Button>
         <button
@@ -78,11 +76,7 @@ export function QuestionImportButton({ onImport }: QuestionImportButtonProps) {
           onChange={(e) => handleFile(e.target.files?.[0])}
         />
       </div>
-      {error && (
-        <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-sm text-red-400 bg-red-500/10 rounded-lg px-3 py-2">{error}</p>}
       <Modal
         isOpen={isHelpOpen}
         onClose={() => setIsHelpOpen(false)}
@@ -93,7 +87,7 @@ export function QuestionImportButton({ onImport }: QuestionImportButtonProps) {
             <h3 className="mb-2 font-bold text-white">JSON</h3>
             <p className="mb-3">{t("import.help.jsonDesc")}</p>
             <pre className="overflow-x-auto rounded-xl bg-surface-950 p-3 text-xs text-gray-200">
-{`[
+              {`[
   {
     "text": "Hlavní město Francie?",
     "type": "quiz",
@@ -110,7 +104,7 @@ export function QuestionImportButton({ onImport }: QuestionImportButtonProps) {
             <h3 className="mb-2 font-bold text-white">CSV</h3>
             <p className="mb-3">{t("import.help.csvDesc")}</p>
             <pre className="overflow-x-auto rounded-xl bg-surface-950 p-3 text-xs text-gray-200">
-{`text,type,option1,option2,option3,option4,correctIndex,timeLimit,points
+              {`text,type,option1,option2,option3,option4,correctIndex,timeLimit,points
 "Hlavní město Francie?",quiz,Paříž,Londýn,Berlín,Madrid,0,20,1000
 "Země je placatá",true_false,Pravda,Nepravda,,,1,10,1000
 "Řeka tekoucí Prahou?",type_answer,Vltava,,,,0,30,2000`}

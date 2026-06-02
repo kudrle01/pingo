@@ -1,16 +1,16 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "convex/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play, ChevronRight, Flag, Users, BarChart2, Zap, StopCircle } from "lucide-react";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
-import { Leaderboard } from "@/components/Leaderboard";
 import { AnswerDistribution } from "@/components/AnswerDistribution";
+import { Leaderboard } from "@/components/Leaderboard";
+import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { useTranslation } from "@/i18n/LanguageProvider";
-import { useToast } from "@/components/ToastProvider";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { AnimatePresence, motion } from "framer-motion";
+import { BarChart2, ChevronRight, Flag, Play, StopCircle, Users, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 export default function HostGame() {
   const { gameId } = useParams<{ gameId: string }>();
@@ -25,7 +25,7 @@ export default function HostGame() {
     api.games.getAnswers,
     game && (game.status === "question" || game.status === "results")
       ? { gameId: game._id, questionIndex: game.currentQuestion }
-      : "skip"
+      : "skip",
   );
 
   const updateStatus = useMutation(api.games.updateStatus);
@@ -59,13 +59,7 @@ export default function HostGame() {
 
     const timeoutId = window.setTimeout(showResults, remainingMs);
     return () => window.clearTimeout(timeoutId);
-  }, [
-    answeredCount,
-    currentQ,
-    game,
-    players,
-    updateStatus,
-  ]);
+  }, [answeredCount, currentQ, game, players, updateStatus]);
 
   if (!game || !quiz || !players) {
     return (
@@ -123,24 +117,28 @@ export default function HostGame() {
   return (
     <div className="min-h-screen-dvh p-4 sm:p-6 safe-x safe-t-min safe-b-min">
       <div className="max-w-3xl mx-auto flex flex-col gap-4">
-
         <div className="card px-0 py-4 sm:p-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-violet-600 to-fuchsia-600 flex items-center justify-center">
               <Zap size={17} className="text-white fill-white" />
             </div>
             <div>
-              <h1 className="text-base font-black text-white leading-tight break-words">{quiz.title}</h1>
+              <h1 className="text-base font-black text-white leading-tight break-words">
+                {quiz.title}
+              </h1>
               <p className="text-gray-500 text-xs">
                 {t("host.question")}{" "}
                 <span className="text-violet-400 font-bold">{game.currentQuestion + 1}</span>
-                {" / "}{quiz.questions.length}
+                {" / "}
+                {quiz.questions.length}
               </p>
             </div>
           </div>
           <div className="flex flex-col items-start gap-3 sm:items-end">
             <div className="text-left sm:text-right">
-              <p className="text-xs text-gray-600 uppercase tracking-wider font-semibold">{t("host.pin")}</p>
+              <p className="text-xs text-gray-600 uppercase tracking-wider font-semibold">
+                {t("host.pin")}
+              </p>
               <p className="text-3xl font-black text-gradient tracking-widest">{game.pin}</p>
             </div>
             {game.status !== "finished" && (
@@ -196,7 +194,9 @@ export default function HostGame() {
                 <p className="text-xs text-violet-400 font-bold mb-2 uppercase tracking-wider">
                   {t("host.questionN", { n: game.currentQuestion + 1 })}
                 </p>
-                <p className="text-xl sm:text-2xl font-black text-white break-words">{currentQ.text}</p>
+                <p className="text-xl sm:text-2xl font-black text-white break-words">
+                  {currentQ.text}
+                </p>
                 <p className="mt-3 text-sm font-semibold text-gray-500">
                   {t("host.answered", { a: answeredCount, b: players.length })}
                 </p>
@@ -245,9 +245,15 @@ export default function HostGame() {
               </div>
 
               <Button size="lg" onClick={handleNext}>
-                {isLastQuestion
-                  ? <><Flag size={18} /> {t("host.end")}</>
-                  : <><ChevronRight size={18} /> {t("host.next")}</>}
+                {isLastQuestion ? (
+                  <>
+                    <Flag size={18} /> {t("host.end")}
+                  </>
+                ) : (
+                  <>
+                    <ChevronRight size={18} /> {t("host.next")}
+                  </>
+                )}
               </Button>
             </motion.div>
           )}
@@ -260,7 +266,6 @@ export default function HostGame() {
           </h2>
           <Leaderboard players={players} />
         </motion.div>
-
       </div>
       <ConfirmDialog
         isOpen={isEndDialogOpen}

@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "@/i18n/LanguageProvider";
+import { api } from "@convex/_generated/api";
 import { useQuery } from "convex/react";
 import { motion } from "framer-motion";
 import { Play } from "lucide-react";
-import { api } from "@convex/_generated/api";
-import { useTranslation } from "@/i18n/LanguageProvider";
+import { useNavigate } from "react-router-dom";
 
 export function ResumeBar() {
   const navigate = useNavigate();

@@ -153,8 +153,7 @@ const cs: Dict = {
   "detail.answer": "Odpověď",
   "detail.correct": "Správně",
   "detail.delete.title": "Smazat kvíz?",
-  "detail.delete.desc":
-    "Kvíz „{title}“ bude trvale odstraněn. Tuto akci nejde vrátit zpět.",
+  "detail.delete.desc": "Kvíz „{title}“ bude trvale odstraněn. Tuto akci nejde vrátit zpět.",
   "detail.delete.confirm": "Smazat kvíz",
   "detail.editHint": "Klepni na otázku pro úpravu",
   "detail.save.title": "Uložit změny?",

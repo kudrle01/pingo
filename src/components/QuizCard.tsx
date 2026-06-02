@@ -1,7 +1,7 @@
-import { HelpCircle, ChevronRight } from "lucide-react";
-import { formatDate } from "@/lib/formatters";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { formatDate } from "@/lib/formatters";
 import type { Quiz } from "@/types";
+import { ChevronRight, HelpCircle } from "lucide-react";
 
 interface QuizCardProps {
   quiz: Quiz;

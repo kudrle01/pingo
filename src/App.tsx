@@ -1,17 +1,17 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useConvexAuth } from "convex/react";
 import type { ReactNode } from "react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-import Home from "@/pages/Home";
-import Dashboard from "@/pages/Dashboard";
 import CreateQuiz from "@/pages/CreateQuiz";
+import Dashboard from "@/pages/Dashboard";
 import EditQuiz from "@/pages/EditQuiz";
-import QuizDetail from "@/pages/QuizDetail";
+import History from "@/pages/History";
+import Home from "@/pages/Home";
 import HostGame from "@/pages/HostGame";
 import JoinGame from "@/pages/JoinGame";
 import PlayGame from "@/pages/PlayGame";
+import QuizDetail from "@/pages/QuizDetail";
 import Results from "@/pages/Results";
-import History from "@/pages/History";
 import Settings from "@/pages/Settings";
 
 function ProtectedRoute({ children }: { children: ReactNode }) {
@@ -37,12 +37,54 @@ export default function App() {
     <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-        <Route path="/create" element={<ProtectedRoute><CreateQuiz /></ProtectedRoute>} />
-        <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
-        <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
-        <Route path="/quiz/:id" element={<ProtectedRoute><QuizDetail /></ProtectedRoute>} />
-        <Route path="/quiz/:id/edit" element={<ProtectedRoute><EditQuiz /></ProtectedRoute>} />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/create"
+          element={
+            <ProtectedRoute>
+              <CreateQuiz />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/history"
+          element={
+            <ProtectedRoute>
+              <History />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <Settings />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz/:id"
+          element={
+            <ProtectedRoute>
+              <QuizDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quiz/:id/edit"
+          element={
+            <ProtectedRoute>
+              <EditQuiz />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/host/:gameId" element={<HostGame />} />
         <Route path="/join" element={<JoinGame />} />
         <Route path="/play/:gameId" element={<PlayGame />} />

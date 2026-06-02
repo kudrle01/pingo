@@ -1,9 +1,21 @@
 const DICEBEAR_BASE = "https://api.dicebear.com/9.x/bottts-neutral/svg";
 
 const BG_COLORS = [
-  "b6e3f4", "c0aede", "d1d4f9", "ffd5dc", "fde68a",
-  "a7f3d0", "fed7aa", "e9d5ff", "bfdbfe", "fbcfe8",
-  "bbf7d0", "fecaca", "fef3c7", "ddd6fe", "cffafe",
+  "b6e3f4",
+  "c0aede",
+  "d1d4f9",
+  "ffd5dc",
+  "fde68a",
+  "a7f3d0",
+  "fed7aa",
+  "e9d5ff",
+  "bfdbfe",
+  "fbcfe8",
+  "bbf7d0",
+  "fecaca",
+  "fef3c7",
+  "ddd6fe",
+  "cffafe",
 ];
 
 export interface AvatarOption {

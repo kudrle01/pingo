@@ -1,6 +1,6 @@
+import type { Question } from "@/types";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
-import type { Question } from "@/types";
 
 interface AnswerCount {
   index: number;
@@ -13,12 +13,7 @@ interface AnswerDistributionProps {
   total: number;
 }
 
-const BAR_COLORS = [
-  "bg-[#e74c3c]",
-  "bg-[#3498db]",
-  "bg-[#f39c12]",
-  "bg-[#2ecc71]",
-];
+const BAR_COLORS = ["bg-[#e74c3c]", "bg-[#3498db]", "bg-[#f39c12]", "bg-[#2ecc71]"];
 
 export function AnswerDistribution({ question, counts, total }: AnswerDistributionProps) {
   const max = Math.max(...counts.map((c) => c.count), 1);
@@ -32,14 +27,21 @@ export function AnswerDistribution({ question, counts, total }: AnswerDistributi
         const isCorrect = idx === question.correctIndex;
 
         return (
-          <div key={idx} className="grid grid-cols-[0.5rem_minmax(0,1fr)_1.25rem] items-center gap-3">
+          <div
+            key={idx}
+            className="grid grid-cols-[0.5rem_minmax(0,1fr)_1.25rem] items-center gap-3"
+          >
             <div className={`h-2 w-2 rounded-full ${BAR_COLORS[idx] ?? "bg-gray-500"}`} />
             <div className="min-w-0">
               <div className="mb-1 flex items-start justify-between gap-3 text-sm">
-                <span className={`min-w-0 flex-1 break-words font-medium ${isCorrect ? "text-green-400" : "text-gray-300"}`}>
+                <span
+                  className={`min-w-0 flex-1 break-words font-medium ${isCorrect ? "text-green-400" : "text-gray-300"}`}
+                >
                   {option}
                 </span>
-                <span className="shrink-0 text-gray-400">{count} ({pct}%)</span>
+                <span className="shrink-0 text-gray-400">
+                  {count} ({pct}%)
+                </span>
               </div>
               <div className="h-6 bg-surface-600 rounded-lg overflow-hidden">
                 <motion.div

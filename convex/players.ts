@@ -1,6 +1,6 @@
-import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 import { closeActiveGamesForUser } from "./cleanup";
 
 export const listByGame = query({
@@ -40,7 +40,7 @@ export const join = mutation({
       .collect();
     const normalizedNickname = nickname.toLocaleLowerCase("cs-CZ");
     const isTaken = players.some(
-      (player) => player.nickname.trim().toLocaleLowerCase("cs-CZ") === normalizedNickname
+      (player) => player.nickname.trim().toLocaleLowerCase("cs-CZ") === normalizedNickname,
     );
     if (isTaken) throw new Error("Tahle přezdívka už je ve hře obsazená");
 

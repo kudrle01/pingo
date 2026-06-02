@@ -1,6 +1,6 @@
+import { authTables } from "@convex-dev/auth/server";
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
-import { authTables } from "@convex-dev/auth/server";
 
 export default defineSchema({
   ...authTables,
@@ -12,16 +12,12 @@ export default defineSchema({
     questions: v.array(
       v.object({
         text: v.string(),
-        type: v.union(
-          v.literal("quiz"),
-          v.literal("true_false"),
-          v.literal("type_answer")
-        ),
+        type: v.union(v.literal("quiz"), v.literal("true_false"), v.literal("type_answer")),
         options: v.array(v.string()),
         correctIndex: v.number(),
         timeLimit: v.number(),
         points: v.number(),
-      })
+      }),
     ),
     createdAt: v.number(),
   }),
@@ -34,7 +30,7 @@ export default defineSchema({
       v.literal("lobby"),
       v.literal("question"),
       v.literal("results"),
-      v.literal("finished")
+      v.literal("finished"),
     ),
     currentQuestion: v.number(),
     questionStartedAt: v.optional(v.number()),

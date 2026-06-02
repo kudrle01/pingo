@@ -1,12 +1,5 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useState,
-  type ReactNode,
-} from "react";
-import { translations, type Lang } from "@/i18n/translations";
+import { type Lang, translations } from "@/i18n/translations";
+import { type ReactNode, createContext, useCallback, useContext, useEffect, useState } from "react";
 
 type TParams = Record<string, string | number>;
 
@@ -54,13 +47,11 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
       }
       return str;
     },
-    [lang]
+    [lang],
   );
 
   return (
-    <LanguageContext.Provider value={{ lang, setLang, t }}>
-      {children}
-    </LanguageContext.Provider>
+    <LanguageContext.Provider value={{ lang, setLang, t }}>{children}</LanguageContext.Provider>
   );
 }
 

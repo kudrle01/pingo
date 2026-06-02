@@ -1,19 +1,19 @@
-import { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
-import { motion } from "framer-motion";
-import { Play, Pencil, Trash2, HelpCircle, Clock, Trophy, Check, X } from "lucide-react";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
 import { AppHeader } from "@/components/AppHeader";
+import { QuestionEditor } from "@/components/QuestionEditor";
+import { useToast } from "@/components/ToastProvider";
 import { Button } from "@/components/ui/Button";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { QuestionEditor } from "@/components/QuestionEditor";
 import { useTranslation } from "@/i18n/LanguageProvider";
-import { useToast } from "@/components/ToastProvider";
 import { formatDate } from "@/lib/formatters";
 import { generatePin } from "@/lib/pinGenerator";
 import type { Question, QuestionType } from "@/types";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { motion } from "framer-motion";
+import { Check, Clock, HelpCircle, Pencil, Play, Trash2, Trophy, X } from "lucide-react";
+import { useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
 function formatDuration(totalSeconds: number) {
   if (totalSeconds < 60) return `${totalSeconds}s`;
@@ -207,7 +207,9 @@ export default function QuizDetail() {
                 className="rounded-2xl bg-white/[0.04] border border-white/5 p-3 flex flex-col items-center gap-1 text-center"
               >
                 <Icon size={16} className="text-violet-300" />
-                <span className="text-lg font-black text-white leading-none whitespace-nowrap">{value}</span>
+                <span className="text-lg font-black text-white leading-none whitespace-nowrap">
+                  {value}
+                </span>
                 <span className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">
                   {label}
                 </span>
@@ -217,7 +219,13 @@ export default function QuizDetail() {
         </motion.div>
 
         <div className="flex flex-col gap-2">
-          <Button size="lg" onClick={handlePlay} isLoading={isStarting} disabled={!me} className="w-full">
+          <Button
+            size="lg"
+            onClick={handlePlay}
+            isLoading={isStarting}
+            disabled={!me}
+            className="w-full"
+          >
             <Play size={18} /> {t("detail.play")}
           </Button>
           <div className="flex gap-2">
@@ -273,21 +281,14 @@ export default function QuizDetail() {
             }
 
             return (
-              <motion.div
+              <motion.button
                 key={idx}
+                type="button"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(idx * 0.03, 0.3) }}
-                role="button"
-                tabIndex={0}
                 onClick={() => startEdit(idx)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    startEdit(idx);
-                  }
-                }}
-                className="tile p-4 flex gap-3 cursor-pointer active:scale-[0.99]"
+                className="tile p-4 flex gap-3 cursor-pointer active:scale-[0.99] w-full text-left"
               >
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-violet-600/20 text-violet-300 text-xs font-black">
                   {idx + 1}
@@ -314,7 +315,7 @@ export default function QuizDetail() {
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </motion.button>
             );
           })}
         </div>

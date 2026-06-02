@@ -1,10 +1,10 @@
-import { useEffect } from "react";
-import { Medal } from "lucide-react";
-import { motion } from "framer-motion";
-import confetti from "canvas-confetti";
-import { formatScore } from "@/lib/formatters";
 import { getAvatar } from "@/lib/avatars";
+import { formatScore } from "@/lib/formatters";
 import type { Player } from "@/types";
+import confetti from "canvas-confetti";
+import { motion } from "framer-motion";
+import { Medal } from "lucide-react";
+import { useEffect } from "react";
 
 interface PodiumProps {
   players: Player[];
@@ -13,9 +13,9 @@ interface PodiumProps {
 }
 
 const SLOTS = [
-  { rank: 2, height: "h-28", bg: "bg-gray-600",   crown: "bg-gray-500",   delay: 0.5 },
+  { rank: 2, height: "h-28", bg: "bg-gray-600", crown: "bg-gray-500", delay: 0.5 },
   { rank: 1, height: "h-44", bg: "bg-yellow-500", crown: "bg-yellow-400", delay: 1.3 },
-  { rank: 3, height: "h-16", bg: "bg-amber-700",  crown: "bg-amber-600",  delay: 0.0 },
+  { rank: 3, height: "h-16", bg: "bg-amber-700", crown: "bg-amber-600", delay: 0.0 },
 ] as const;
 
 const RANK_ICONS = {
@@ -52,13 +52,14 @@ export function Podium({ players, highlightId, celebrate = true }: PodiumProps) 
                 transition={{ delay: delay + 0.4, type: "spring", bounce: 0.4 }}
                 className="text-center mb-2 w-full"
               >
-                <div className={[
-                  "w-14 h-14 rounded-full mx-auto mb-1.5 overflow-hidden border-2 shadow-lg",
-                  player._id === highlightId
-                    ? "border-violet-400 shadow-glow-sm scale-110"
-                    : "border-white/20",
-                ].join(" ")}
-                  style={{ backgroundColor: "#" + avatar.bg }}
+                <div
+                  className={[
+                    "w-14 h-14 rounded-full mx-auto mb-1.5 overflow-hidden border-2 shadow-lg",
+                    player._id === highlightId
+                      ? "border-violet-400 shadow-glow-sm scale-110"
+                      : "border-white/20",
+                  ].join(" ")}
+                  style={{ backgroundColor: `#${avatar.bg}` }}
                 >
                   <img src={avatar.url} alt={avatar.label} className="w-full h-full object-cover" />
                 </div>
@@ -76,7 +77,9 @@ export function Podium({ players, highlightId, celebrate = true }: PodiumProps) 
               style={{ originY: 1 }}
               className={`w-full ${height} ${bg} rounded-t-2xl flex items-start justify-center pt-3 shadow-lg`}
             >
-              <span className={`${crown} rounded-full w-8 h-8 flex items-center justify-center text-white font-black text-sm shadow-md`}>
+              <span
+                className={`${crown} rounded-full w-8 h-8 flex items-center justify-center text-white font-black text-sm shadow-md`}
+              >
                 {RANK_ICONS[rank] ?? rank}
               </span>
             </motion.div>
@@ -86,4 +89,3 @@ export function Podium({ players, highlightId, celebrate = true }: PodiumProps) 
     </div>
   );
 }
-

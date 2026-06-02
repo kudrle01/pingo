@@ -1,5 +1,5 @@
-import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
+import type { MutationCtx } from "./_generated/server";
 
 /**
  * Ensures a user has at most one active (non-finished) game at a time —
@@ -13,7 +13,7 @@ export async function closeActiveGamesForUser(
   ctx: MutationCtx,
   hostId: string,
   userId: Id<"users"> | null,
-  exceptGameId?: Id<"games">
+  exceptGameId?: Id<"games">,
 ) {
   const hosted = await ctx.db
     .query("games")

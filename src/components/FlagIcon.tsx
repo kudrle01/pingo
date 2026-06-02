@@ -12,21 +12,13 @@ export function FlagIcon({ code, className = "" }: FlagIconProps) {
       className={`inline-flex overflow-hidden rounded-[3px] ring-1 ring-white/15 ${className}`}
     >
       {code === "cs" ? (
-        <svg
-          viewBox="0 0 60 40"
-          preserveAspectRatio="xMidYMid slice"
-          className="h-full w-full"
-        >
+        <svg viewBox="0 0 60 40" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
           <rect width="60" height="20" fill="#ffffff" />
           <rect y="20" width="60" height="20" fill="#d7141a" />
           <path d="M0 0 30 20 0 40Z" fill="#11457e" />
         </svg>
       ) : (
-        <svg
-          viewBox="0 0 60 30"
-          preserveAspectRatio="xMidYMid slice"
-          className="h-full w-full"
-        >
+        <svg viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice" className="h-full w-full">
           <clipPath id="flag-uk-clip">
             <path d="M0 0v30h60V0z" />
           </clipPath>

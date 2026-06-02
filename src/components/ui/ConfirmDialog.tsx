@@ -1,8 +1,8 @@
-import type { ReactNode } from "react";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Modal } from "@/components/ui/Modal";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { AlertTriangle } from "lucide-react";
+import type { ReactNode } from "react";
 
 interface ConfirmDialogProps {
   isOpen: boolean;

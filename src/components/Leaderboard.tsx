@@ -1,8 +1,8 @@
-import { Medal, Flame } from "lucide-react";
-import { formatScore, formatRank } from "@/lib/formatters";
-import { getAvatar } from "@/lib/avatars";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { getAvatar } from "@/lib/avatars";
+import { formatRank, formatScore } from "@/lib/formatters";
 import type { Player } from "@/types";
+import { Flame, Medal } from "lucide-react";
 
 interface LeaderboardProps {
   players: Player[];
@@ -17,9 +17,7 @@ export function Leaderboard({ players, highlightId }: LeaderboardProps) {
   const sorted = [...players].sort((a, b) => b.score - a.score);
 
   if (sorted.length === 0) {
-    return (
-      <div className="text-center text-gray-600 py-8 text-sm">{t("lb.empty")}</div>
-    );
+    return <div className="text-center text-gray-600 py-8 text-sm">{t("lb.empty")}</div>;
   }
 
   return (
@@ -39,16 +37,20 @@ export function Leaderboard({ players, highlightId }: LeaderboardProps) {
                   : "bg-white/[0.03] border border-white/[0.04] hover:bg-white/[0.05]",
             ].join(" ")}
           >
-            <span className={`w-6 flex justify-center shrink-0 ${MEDAL_COLORS[idx] ?? "text-gray-600"}`}>
-              {idx < 3
-                ? <Medal size={15} />
-                : <span className="text-xs font-bold text-gray-600">{formatRank(idx + 1)}</span>}
+            <span
+              className={`w-6 flex justify-center shrink-0 ${MEDAL_COLORS[idx] ?? "text-gray-600"}`}
+            >
+              {idx < 3 ? (
+                <Medal size={15} />
+              ) : (
+                <span className="text-xs font-bold text-gray-600">{formatRank(idx + 1)}</span>
+              )}
             </span>
             <img
               src={avatar.url}
               alt={avatar.label}
               className="w-8 h-8 rounded-lg shrink-0"
-              style={{ backgroundColor: "#" + avatar.bg }}
+              style={{ backgroundColor: `#${avatar.bg}` }}
             />
             <span className="flex-1 min-w-0 font-semibold text-white truncate text-sm">
               {player.nickname}
@@ -61,7 +63,9 @@ export function Leaderboard({ players, highlightId }: LeaderboardProps) {
                 <Flame size={12} /> {player.streak}
               </span>
             )}
-            <span className={`font-black text-sm shrink-0 ${isHighlighted ? "text-violet-300" : "text-gray-300"}`}>
+            <span
+              className={`font-black text-sm shrink-0 ${isHighlighted ? "text-violet-300" : "text-gray-300"}`}
+            >
               {formatScore(player.score)}
             </span>
           </li>

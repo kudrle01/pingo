@@ -1,18 +1,30 @@
-import { useEffect, useState } from "react";
-import { useParams, useSearchParams, useNavigate } from "react-router-dom";
-import { useQuery, useMutation } from "convex/react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Triangle, Diamond, Circle, Square, CheckCircle2, XCircle, Check, X, SendHorizontal, Clock, LoaderCircle } from "lucide-react";
-import { api } from "@convex/_generated/api";
-import type { Id } from "@convex/_generated/dataModel";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { api } from "@convex/_generated/api";
+import type { Id } from "@convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Check,
+  CheckCircle2,
+  Circle,
+  Clock,
+  Diamond,
+  LoaderCircle,
+  SendHorizontal,
+  Square,
+  Triangle,
+  X,
+  XCircle,
+} from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 
-import { formatScore } from "@/lib/formatters";
-import { isTextAnswerCorrect } from "@/lib/questionTemplates";
-import { getAvatar } from "@/lib/avatars";
 import { useCountdown } from "@/hooks/useCountdown";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { getAvatar } from "@/lib/avatars";
+import { formatScore } from "@/lib/formatters";
+import { isTextAnswerCorrect } from "@/lib/questionTemplates";
 
 const ANSWER_COLORS = [
   { bg: "bg-[#e74c3c]", selected: "ring-4 ring-white shadow-xl" },
@@ -26,7 +38,9 @@ const ANSWER_ICONS = [Triangle, Diamond, Circle, Square];
 const buttonVariants = {
   hidden: { opacity: 0, scale: 0.6, y: 30 },
   show: (i: number) => ({
-    opacity: 1, scale: 1, y: 0,
+    opacity: 1,
+    scale: 1,
+    y: 0,
     transition: { delay: i * 0.08, type: "spring" as const, bounce: 0.45 },
   }),
   tap: { scale: 0.93 },
@@ -39,7 +53,7 @@ function TimerBar({ duration, onExpire }: { duration: number; onExpire: () => vo
   return (
     <motion.div
       animate={urgent ? { scale: [1, 1.06, 1] } : {}}
-      transition={{ repeat: Infinity, duration: 0.6 }}
+      transition={{ repeat: Number.POSITIVE_INFINITY, duration: 0.6 }}
       className={`flex items-center gap-2 rounded-xl px-3 py-2 ${urgent ? "bg-red-900/60" : "bg-surface-700"}`}
     >
       <Clock size={16} className={urgent ? "text-red-400" : "text-gray-400"} />
@@ -50,7 +64,9 @@ function TimerBar({ duration, onExpire }: { duration: number; onExpire: () => vo
           className={`h-full rounded-full ${urgent ? "bg-red-500" : "bg-violet-500"}`}
         />
       </div>
-      <span className={`text-sm font-bold w-5 text-right ${urgent ? "text-red-400" : "text-gray-300"}`}>
+      <span
+        className={`text-sm font-bold w-5 text-right ${urgent ? "text-red-400" : "text-gray-300"}`}
+      >
         {timeLeft}
       </span>
     </motion.div>
@@ -94,6 +110,7 @@ export default function PlayGame() {
   const [lastPoints, setLastPoints] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState(false);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: reset per-question state only when the question changes
   useEffect(() => {
     setSelectedAnswer(null);
     setTextAnswer("");
@@ -111,11 +128,7 @@ export default function PlayGame() {
   if (!game || !quiz || !player) {
     return (
       <div className="min-h-screen-dvh safe-x flex items-center justify-center">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-gray-400"
-        >
+        <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-gray-400">
           {t("play.waitingGame")}
         </motion.p>
       </div>
@@ -129,9 +142,9 @@ export default function PlayGame() {
       <div className="min-h-screen-dvh safe-x flex flex-col items-center justify-center gap-6 p-6">
         <motion.div
           animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 2.5, ease: "easeInOut" }}
           className="w-24 h-24 rounded-full overflow-hidden shadow-xl"
-          style={{ backgroundColor: "#" + avatar.bg }}
+          style={{ backgroundColor: `#${avatar.bg}` }}
         >
           <img src={avatar.url} alt={avatar.label} className="w-full h-full object-cover" />
         </motion.div>
@@ -145,7 +158,7 @@ export default function PlayGame() {
         </motion.div>
         <motion.div
           animate={{ opacity: [0.4, 1, 0.4] }}
-          transition={{ repeat: Infinity, duration: 1.8 }}
+          transition={{ repeat: Number.POSITIVE_INFINITY, duration: 1.8 }}
           className="flex items-center gap-2 text-gray-500 text-sm"
         >
           <Clock size={14} />
@@ -157,9 +170,7 @@ export default function PlayGame() {
 
   if (game.status === "results") {
     const currentQ = quiz.questions[game.currentQuestion];
-    const isCorrect = selectedAnswer !== null
-      ? selectedAnswer === currentQ?.correctIndex
-      : false;
+    const isCorrect = selectedAnswer !== null ? selectedAnswer === currentQ?.correctIndex : false;
     const didAnswer = selectedAnswer !== null;
 
     return (
@@ -169,11 +180,13 @@ export default function PlayGame() {
           animate={{ scale: 1, rotate: 0 }}
           transition={{ type: "spring", bounce: 0.5 }}
         >
-          {!didAnswer
-            ? <XCircle size={80} className="text-gray-500" />
-            : isCorrect
-              ? <CheckCircle2 size={80} className="text-green-400" />
-              : <XCircle size={80} className="text-red-400" />}
+          {!didAnswer ? (
+            <XCircle size={80} className="text-gray-500" />
+          ) : isCorrect ? (
+            <CheckCircle2 size={80} className="text-green-400" />
+          ) : (
+            <XCircle size={80} className="text-red-400" />
+          )}
         </motion.div>
 
         <motion.h2
@@ -195,7 +208,9 @@ export default function PlayGame() {
             className="card px-5 py-3 text-center max-w-[85vw]"
           >
             <p className="text-xs text-gray-500 mb-1">{t("play.correctAnswer")}</p>
-            <p className="text-white font-bold break-words">{currentQ.options[currentQ.correctIndex]}</p>
+            <p className="text-white font-bold break-words">
+              {currentQ.options[currentQ.correctIndex]}
+            </p>
           </motion.div>
         )}
 
@@ -273,7 +288,7 @@ export default function PlayGame() {
             src={avatar.url}
             alt={avatar.label}
             className="w-8 h-8 rounded-lg"
-            style={{ backgroundColor: "#" + avatar.bg }}
+            style={{ backgroundColor: `#${avatar.bg}` }}
           />
           <div>
             <p className="text-white font-bold text-sm leading-tight">{player.nickname}</p>
@@ -303,7 +318,9 @@ export default function PlayGame() {
           transition={{ type: "spring", bounce: 0.3 }}
           className="card px-0 py-4 sm:p-6 flex items-center justify-center min-h-[120px]"
         >
-          <p className="text-lg sm:text-xl font-bold text-white text-center break-words">{currentQ.text}</p>
+          <p className="text-lg sm:text-xl font-bold text-white text-center break-words">
+            {currentQ.text}
+          </p>
         </motion.div>
       </AnimatePresence>
 
@@ -317,7 +334,7 @@ export default function PlayGame() {
           >
             <motion.div
               animate={{ rotate: [0, -5, 5, -5, 5, 0] }}
-              transition={{ repeat: Infinity, repeatDelay: 1.5, duration: 0.4 }}
+              transition={{ repeat: Number.POSITIVE_INFINITY, repeatDelay: 1.5, duration: 0.4 }}
               className="text-violet-300"
             >
               <LoaderCircle size={28} className="animate-spin" />
@@ -391,7 +408,11 @@ export default function PlayGame() {
                   "disabled:cursor-not-allowed",
                 ].join(" ")}
               >
-                {idx === 0 ? <Check size={32} className="shrink-0" /> : <X size={32} className="shrink-0" />}
+                {idx === 0 ? (
+                  <Check size={32} className="shrink-0" />
+                ) : (
+                  <X size={32} className="shrink-0" />
+                )}
                 <span className="min-w-0 break-words">{option}</span>
               </motion.button>
             );
@@ -419,10 +440,4 @@ export default function PlayGame() {
             autoFocus
           />
           <Button type="submit" size="lg" disabled={answered || textAnswer.trim().length === 0}>
-            <SendHorizontal size={18} /> {t("play.submit")}
-          </Button>
-        </motion.form>
-      )}
-    </div>
-  );
-}
+            

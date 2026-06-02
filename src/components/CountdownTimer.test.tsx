@@ -1,6 +1,6 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, act } from "@testing-library/react";
 import { CountdownTimer } from "@/components/CountdownTimer";
+import { act, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("CountdownTimer", () => {
   beforeEach(() => {
@@ -13,7 +13,7 @@ describe("CountdownTimer", () => {
 
   it("zobrazí správný počáteční čas", () => {
     render(<CountdownTimer duration={20} />);
-    
+
     expect(screen.getByRole("timer")).toBeInTheDocument();
     expect(screen.getByText("20")).toBeInTheDocument();
   });

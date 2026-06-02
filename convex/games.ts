@@ -1,6 +1,6 @@
-import { v } from "convex/values";
-import { query, mutation } from "./_generated/server";
 import { getAuthUserId } from "@convex-dev/auth/server";
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
 import { closeActiveGamesForUser } from "./cleanup";
 
 export const getByPin = query({
@@ -45,7 +45,7 @@ export const updateStatus = mutation({
       v.literal("lobby"),
       v.literal("question"),
       v.literal("results"),
-      v.literal("finished")
+      v.literal("finished"),
     ),
     currentQuestion: v.optional(v.number()),
     questionStartedAt: v.optional(v.number()),
@@ -120,7 +120,7 @@ export const submitAnswer = mutation({
     const existingAnswers = await ctx.db
       .query("answers")
       .withIndex("by_game_question", (q) =>
-        q.eq("gameId", args.gameId).eq("questionIndex", args.questionIndex)
+        q.eq("gameId", args.gameId).eq("questionIndex", args.questionIndex),
       )
       .collect();
     const existingAnswer = existingAnswers.find((answer) => answer.playerId === args.playerId);
@@ -159,7 +159,7 @@ export const getAnswers = query({
     return await ctx.db
       .query("answers")
       .withIndex("by_game_question", (q) =>
-        q.eq("gameId", gameId).eq("questionIndex", questionIndex)
+        q.eq("gameId", gameId).eq("questionIndex", questionIndex),
       )
       .collect();
   },
@@ -196,38 +196,36 @@ export const history = query({
       [...gameMap.values()]
         .filter((game) => game.status === "finished")
         .map(async (game) => {
-        const quiz = await ctx.db.get(game.quizId);
-        const players = await ctx.db
-          .query("players")
-          .withIndex("by_game", (q) => q.eq("gameId", game._id))
-          .collect();
-        const ranked = [...players].sort((a, b) => b.score - a.score);
+          const quiz = await ctx.db.get(game.quizId);
+          const players = await ctx.db
+            .query("players")
+            .withIndex("by_game", (q) => q.eq("gameId", game._id))
+            .collect();
+          const ranked = [...players].sort((a, b) => b.score - a.score);
 
-        const myPlayer = myPlayerByGame.get(game._id);
-        const myRank = myPlayer
-          ? ranked.findIndex((p) => p._id === myPlayer._id) + 1
-          : null;
+          const myPlayer = myPlayerByGame.get(game._id);
+          const myRank = myPlayer ? ranked.findIndex((p) => p._id === myPlayer._id) + 1 : null;
 
-        const winner = ranked[0];
+          const winner = ranked[0];
 
-        return {
-          _id: game._id,
-          pin: game.pin,
-          status: game.status,
-          finishedAt: game.finishedAt,
-          playedAt: game.finishedAt ?? game._creationTime,
-          quizTitle: quiz?.title ?? "Smazaný kvíz",
-          questionCount: quiz?.questions.length ?? 0,
-          playerCount: players.length,
-          hosted: game.hostId === userId,
-          played: myPlayer !== undefined,
-          myPlayerId: myPlayer?._id ?? null,
-          myRank: myRank && myRank > 0 ? myRank : null,
-          myScore: myPlayer?.score ?? null,
-          winnerNickname: winner?.nickname ?? null,
-          winnerScore: winner?.score ?? null,
-        };
-      })
+          return {
+            _id: game._id,
+            pin: game.pin,
+            status: game.status,
+            finishedAt: game.finishedAt,
+            playedAt: game.finishedAt ?? game._creationTime,
+            quizTitle: quiz?.title ?? "Smazaný kvíz",
+            questionCount: quiz?.questions.length ?? 0,
+            playerCount: players.length,
+            hosted: game.hostId === userId,
+            played: myPlayer !== undefined,
+            myPlayerId: myPlayer?._id ?? null,
+            myRank: myRank && myRank > 0 ? myRank : null,
+            myScore: myPlayer?.score ?? null,
+            winnerNickname: winner?.nickname ?? null,
+            winnerScore: winner?.score ?? null,
+          };
+        }),
     );
 
     return results.sort((a, b) => b.playedAt - a.playedAt);
@@ -267,9 +265,7 @@ export const active = query({
 
     if (candidates.size === 0) return null;
 
-    const game = [...candidates.values()].sort(
-      (a, b) => b._creationTime - a._creationTime
-    )[0];
+    const game = [...candidates.values()].sort((a, b) => b._creationTime - a._creationTime)[0];
     const quiz = await ctx.db.get(game.quizId);
 
     return {

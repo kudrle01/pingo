@@ -1,17 +1,17 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "convex/react";
-import { Plus, Save } from "lucide-react";
-import { api } from "@convex/_generated/api";
 import { AppHeader } from "@/components/AppHeader";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
 import { QuestionEditor } from "@/components/QuestionEditor";
 import { QuestionImportButton } from "@/components/QuestionImportButton";
-import { useTranslation } from "@/i18n/LanguageProvider";
 import { useToast } from "@/components/ToastProvider";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { useTranslation } from "@/i18n/LanguageProvider";
 import { emptyQuestionForType } from "@/lib/questionTemplates";
 import type { Question } from "@/types";
+import { api } from "@convex/_generated/api";
+import { useMutation, useQuery } from "convex/react";
+import { Plus, Save } from "lucide-react";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CreateQuiz() {
   const navigate = useNavigate();
@@ -22,9 +22,7 @@ export default function CreateQuiz() {
 
   const [title, setTitle] = useState("");
   const [isPublic, setIsPublic] = useState(true);
-  const [questions, setQuestions] = useState<Question[]>([
-    emptyQuestionForType("quiz"),
-  ]);
+  const [questions, setQuestions] = useState<Question[]>([emptyQuestionForType("quiz")]);
   const [saving, setSaving] = useState(false);
 
   function addQuestion() {
@@ -41,8 +39,7 @@ export default function CreateQuiz() {
 
   function handleImport(imported: Question[]) {
     setQuestions((prev) => {
-      const isInitial =
-        prev.length === 1 && prev[0].text === "" && prev[0].type === "quiz";
+      const isInitial = prev.length === 1 && prev[0].text === "" && prev[0].type === "quiz";
       return isInitial ? imported : [...prev, ...imported];
     });
   }
@@ -69,7 +66,9 @@ export default function CreateQuiz() {
     <div className="min-h-screen-dvh bg-gray-950">
       <AppHeader title={t("quizForm.createTitle")} back="/dashboard" />
       <div className="max-w-2xl mx-auto p-4 sm:p-6 safe-x safe-b-min">
-        <h1 className="hidden sm:block text-2xl sm:text-3xl font-black text-white mb-8">{t("quizForm.createTitle")}</h1>
+        <h1 className="hidden sm:block text-2xl sm:text-3xl font-black text-white mb-8">
+          {t("quizForm.createTitle")}
+        </h1>
 
         <form onSubmit={handleSave} className="flex flex-col gap-6">
           <div className="bg-gray-900 border border-gray-700 rounded-2xl p-5 flex flex-col gap-4">

@@ -1,8 +1,8 @@
-import { Trash2, ChevronDown } from "lucide-react";
 import { Input } from "@/components/ui/Input";
-import { migrateQuestionType } from "@/lib/questionTemplates";
 import { useTranslation } from "@/i18n/LanguageProvider";
+import { migrateQuestionType } from "@/lib/questionTemplates";
 import type { Question, QuestionType } from "@/types";
+import { ChevronDown, Trash2 } from "lucide-react";
 
 interface QuestionEditorProps {
   question: Question;
@@ -62,9 +62,12 @@ export function QuestionEditor({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label className="text-sm text-gray-300 mb-1.5 block">{t("qedit.type")}</label>
+          <label htmlFor={`q${index}-type`} className="text-sm text-gray-300 mb-1.5 block">
+            {t("qedit.type")}
+          </label>
           <div className="relative">
             <select
+              id={`q${index}-type`}
               value={question.type}
               onChange={(e) => changeType(e.target.value as QuestionType)}
               className="w-full appearance-none bg-gray-800 border border-gray-700 rounded-xl pl-3 pr-9 py-2.5 text-white text-sm"
@@ -80,9 +83,12 @@ export function QuestionEditor({
           </div>
         </div>
         <div>
-          <label className="text-sm text-gray-300 mb-1.5 block">{t("qedit.time")}</label>
+          <label htmlFor={`q${index}-time`} className="text-sm text-gray-300 mb-1.5 block">
+            {t("qedit.time")}
+          </label>
           <div className="relative">
             <select
+              id={`q${index}-time`}
               value={question.timeLimit}
               onChange={(e) => update({ timeLimit: Number(e.target.value) })}
               className="w-full appearance-none bg-gray-800 border border-gray-700 rounded-xl pl-3 pr-9 py-2.5 text-white text-sm"
@@ -102,7 +108,7 @@ export function QuestionEditor({
       </div>
       {question.type === "quiz" && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm text-gray-300">{t("qedit.options")}</label>
+          <p className="text-sm text-gray-300">{t("qedit.options")}</p>
           {question.options.map((opt, oIdx) => (
             <div key={oIdx} className="flex items-center gap-2">
               <input
@@ -127,7 +133,7 @@ export function QuestionEditor({
 
       {question.type === "true_false" && (
         <div className="flex flex-col gap-2">
-          <label className="text-sm text-gray-300">{t("qedit.correctAnswer")}</label>
+          <p className="text-sm text-gray-300">{t("qedit.correctAnswer")}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {question.options.map((opt, oIdx) => {
               const isSelected = question.correctIndex === oIdx;

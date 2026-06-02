@@ -3,7 +3,7 @@ export function calculateScore(
   timeLimit: number,
   answeredInMs: number,
   basePoints: number,
-  streak: number
+  streak: number,
 ): number {
   if (!isCorrect) return 0;
   const timeFactor = 1 - (answeredInMs / (timeLimit * 1000)) * 0.5;

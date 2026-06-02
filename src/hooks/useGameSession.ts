@@ -1,6 +1,6 @@
-import { useQuery, useMutation } from "convex/react";
 import { api } from "@convex/_generated/api";
 import type { Id } from "@convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
 
 export function useGameSession(gameId: Id<"games">) {
   const game = useQuery(api.games.get, { id: gameId });

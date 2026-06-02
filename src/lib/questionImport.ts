@@ -7,12 +7,7 @@ export class QuestionImportError extends Error {
   }
 }
 
-const VALID_TYPES: ReadonlySet<QuestionType> = new Set([
-  "quiz",
-  "true_false",
-  "type_answer",
-]);
-
+const VALID_TYPES: ReadonlySet<QuestionType> = new Set(["quiz", "true_false", "type_answer"]);
 
 function normalizeQuestion(raw: unknown, label: string): Question {
   if (typeof raw !== "object" || raw === null || Array.isArray(raw)) {
@@ -38,15 +33,11 @@ function normalizeQuestion(raw: unknown, label: string): Question {
 
   if (type === "quiz") {
     if (options.length !== 4 || options.some((o) => !o)) {
-      throw new QuestionImportError(
-        `${label}: typ "quiz" vyžaduje právě 4 neprázdné možnosti`,
-      );
+      throw new QuestionImportError(`${label}: typ "quiz" vyžaduje právě 4 neprázdné možnosti`);
     }
   } else if (type === "true_false") {
     if (options.length !== 2) {
-      throw new QuestionImportError(
-        `${label}: typ "true_false" vyžaduje právě 2 možnosti`,
-      );
+      throw new QuestionImportError(`${label}: typ "true_false" vyžaduje právě 2 možnosti`);
     }
   } else {
     if (options.length < 1 || !options[0]) {
@@ -57,11 +48,7 @@ function normalizeQuestion(raw: unknown, label: string): Question {
   }
 
   const correctIndex = Number(r.correctIndex);
-  if (
-    !Number.isInteger(correctIndex) ||
-    correctIndex < 0 ||
-    correctIndex >= options.length
-  ) {
+  if (!Number.isInteger(correctIndex) || correctIndex < 0 || correctIndex >= options.length) {
     throw new QuestionImportError(
       `${label}: "correctIndex" musí být celé číslo 0..${options.length - 1}`,
     );
@@ -85,16 +72,13 @@ export function parseQuestionsJSON(source: string): Question[] {
   try {
     parsed = JSON.parse(source);
   } catch (e) {
-    throw new QuestionImportError(
-      `Soubor není validní JSON: ${(e as Error).message}`,
-    );
+    throw new QuestionImportError(`Soubor není validní JSON: ${(e as Error).message}`);
   }
   if (!Array.isArray(parsed)) {
     throw new QuestionImportError("JSON musí obsahovat pole otázek");
   }
   return parsed.map((item, i) => normalizeQuestion(item, `Otázka ${i + 1}`));
 }
-
 
 function parseCsvLine(line: string, delim: string): string[] {
   const out: string[] = [];
@@ -123,7 +107,6 @@ function parseCsvLine(line: string, delim: string): string[] {
   out.push(cur);
   return out.map((s) => s.trim());
 }
-
 
 export function parseQuestionsCSV(source: string): Question[] {
   const lines = source
@@ -162,12 +145,7 @@ export function parseQuestionsCSV(source: string): Question[] {
   return lines.slice(1).map((line, i) => {
     const cells = parseCsvLine(line, delim);
     const get = (name: string) => cells[idx(name)] ?? "";
-    const optionsRaw = [
-      get("option1"),
-      get("option2"),
-      get("option3"),
-      get("option4"),
-    ];
+    const optionsRaw = [get("option1"), get("option2"), get("option3"), get("option4")];
     const type = get("type") as QuestionType;
 
     let options: string[];
@@ -196,7 +174,5 @@ export async function parseQuestionsFile(file: File): Promise<Question[]> {
   const text = await file.text();
   if (name.endsWith(".json")) return parseQuestionsJSON(text);
   if (name.endsWith(".csv")) return parseQuestionsCSV(text);
-  throw new QuestionImportError(
-    `Nepodporovaný formát "${file.name}" – povoleny .json a .csv`,
-  );
+  throw new QuestionImportError(`Nepodporovaný formát "${file.name}" – povoleny .json a .csv`);
 }

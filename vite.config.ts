@@ -1,7 +1,7 @@
-import { defineConfig } from "vite";
+import { resolve } from "node:path";
 import react from "@vitejs/plugin-react";
 import { VitePWA } from "vite-plugin-pwa";
-import { resolve } from "path";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   plugins: [
@@ -30,8 +30,8 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     alias: {
-      "@/": resolve(__dirname, "src") + "/",
-      "@convex/": resolve(__dirname, "convex") + "/",
+      "@/": `${resolve(__dirname, "src")}/`,
+      "@convex/": `${resolve(__dirname, "convex")}/`,
     },
   },
 });
