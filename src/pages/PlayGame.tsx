@@ -71,6 +71,7 @@ export default function PlayGame() {
   const submitAnswer = useMutation(api.games.submitAnswer);
 
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [answerCorrect, setAnswerCorrect] = useState(false);
   const [textAnswer, setTextAnswer] = useState("");
   const [answered, setAnswered] = useState(false);
   const [lastPoints, setLastPoints] = useState<number | null>(null);
@@ -79,6 +80,7 @@ export default function PlayGame() {
   // biome-ignore lint/correctness/useExhaustiveDependencies: reset per-question state only when the question changes
   useEffect(() => {
     setSelectedAnswer(null);
+    setAnswerCorrect(false);
     setTextAnswer("");
     setAnswered(false);
     setLastPoints(null);
@@ -136,8 +138,8 @@ export default function PlayGame() {
 
   if (game.status === "results") {
     const currentQ = quiz.questions[game.currentQuestion];
-    const isCorrect = selectedAnswer !== null ? selectedAnswer === currentQ?.correctIndex : false;
     const didAnswer = selectedAnswer !== null;
+    const isCorrect = didAnswer && answerCorrect;
 
     return (
       <div className="min-h-screen-dvh safe-x flex flex-col items-center justify-center gap-5 p-6">
@@ -221,6 +223,7 @@ export default function PlayGame() {
     if (!game || !playerId || answered) return;
 
     setSelectedAnswer(optionIdx);
+    setAnswerCorrect(isCorrect);
     setAnswered(true);
 
     try {
