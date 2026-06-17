@@ -4,5 +4,4 @@ dist
 .convex
 .agents/
 examples/
-*.md
 import-samples
